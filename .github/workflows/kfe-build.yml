@@ -1,0 +1,114 @@
+# KFE (KadeFuck Engine) —— Windows 云端编译
+#
+# 为什么用云端编译：KFE 的补丁从来没有被真正编译验证过。
+# 本机没有 Haxe 工具链，而装一套（haxe + haxelib + lime + hxcpp + MSVC）
+# 又重又慢。GitHub Actions 直接给你一台现成的 windows-latest 机器。
+#
+# 用法：
+#   1. 把这个仓库推到 GitHub
+#   2. push 后自动触发；也可以在 Actions 页面点 "Run workflow" 手动触发
+#   3. 编译完在 run 页面底部下载 artifact "KFE-windows"
+#
+# 说明：原版仓库自带的 windows.yml 用的是 actions/upload-artifact@v2（已被 GitHub 停用）
+# 且用 debug 构建却上传 release 路径，必然拿不到东西。这里一并修掉。
+
+name: KFE Build (Windows)
+
+on:
+  push:
+    branches: [main, master, dev]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    timeout-minutes: 90
+
+    env:
+      HAXELIB_PATH: ${{ github.workspace }}\..\haxelib
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Haxe 4.1.5
+        uses: krdlab/setup-haxe@v1
+        with:
+          haxe-version: 4.1.5
+
+      - name: Cache haxelib
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.HAXELIB_PATH }}
+          key: haxelib-${{ runner.os }}-${{ hashFiles('Project.xml') }}
+          restore-keys: |
+            haxelib-${{ runner.os }}-
+
+      - name: 安装依赖
+        shell: bash
+        run: |
+          set -e
+          mkdir -p "$HAXELIB_PATH"
+          haxelib setup "$HAXELIB_PATH"
+
+          # ── 固定版本的核心库（KE 1.8 时代配套） ──
+          haxelib install lime 7.9.0 --quiet
+          haxelib install openfl 9.1.0 --quiet
+          haxelib install flixel 4.9.1 --quiet
+          haxelib install flixel-addons 2.9.1 --quiet
+          haxelib install flixel-ui 2.3.4 --quiet
+          haxelib install hscript 2.0.7 --quiet
+          haxelib install actuate 1.8.7 --quiet
+          haxelib install flixel-tools --quiet
+          haxelib install format --quiet
+          haxelib install hxcpp --quiet
+
+          haxelib run lime setup flixel --quiet || true
+          haxelib run lime setup --quiet || true
+
+          # ── 必须是 git 版本（haxelib 上没有对应发布） ──
+          haxelib git faxe https://github.com/uhrobots/faxe --quiet || true
+          haxelib git polymod https://github.com/MasterEric/polymod.git --quiet
+          haxelib git discord_rpc https://github.com/Aidan63/linc_discord-rpc --quiet
+
+          # ── extension-webm：KadeDev 分支，且必须本地重编 ──
+          haxelib git extension-webm https://github.com/KadeDev/extension-webm --quiet
+
+          # ── ★ Lua 运行时（ModchartState/LuaClass 里 import llua.* 就来自这里） ──
+          haxelib git linc_luajit https://github.com/nebulazorua/linc_luajit.git --quiet
+          haxelib git hxvm-luajit https://github.com/nebulazorua/hxvm-luajit --quiet
+
+          haxelib list
+
+      - name: 重编 extension-webm（原生库）
+        shell: bash
+        run: haxelib run lime rebuild extension-webm windows
+
+      - name: 编译 windows -release
+        shell: bash
+        run: |
+          set -e
+          haxelib run lime build windows -release
+          echo "--- 产出目录 ---"
+          ls -la export/release/windows/bin || true
+
+      - name: 上传产物
+        uses: actions/upload-artifact@v4
+        with:
+          name: KFE-windows
+          path: export/release/windows/bin
+          if-no-files-found: error
+          retention-days: 30
+
+      # 编译失败时把 log 也带上来，方便贴回来看
+      - name: 失败时上传编译日志
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: KFE-build-logs
+          path: |
+            export/release/windows/haxe/log.txt
+            export/release/windows/obj
+          if-no-files-found: warn
+          retention-days: 14
