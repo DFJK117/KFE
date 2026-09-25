@@ -41,9 +41,12 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ${{ env.HAXELIB_PATH }}
-          key: haxelib-${{ runner.os }}-${{ hashFiles('Project.xml') }}
+          # key 里带 v2：旧缓存里存着第 2 次 CI 被 `lime setup` 顶上去的那批版本
+          # （flixel-addons 4.0.2 / lime 8.3.2 / openfl 9.5.2 / hxcpp 4.3.2 ...），
+          # 换 key 让它强制重建，别把脏版本带进下一轮。
+          key: haxelib-v2-${{ runner.os }}-${{ hashFiles('Project.xml') }}
           restore-keys: |
-            haxelib-${{ runner.os }}-
+            haxelib-v2-${{ runner.os }}-
 
       - name: 安装依赖
         shell: bash
@@ -81,8 +84,24 @@ jobs:
 
           # 注意：这里一律不加 --quiet。haxelib 的位置参数是
           # `install <name> [version]`，多塞一个 --quiet 有被当成 version 的风险。
-          haxelib run lime setup flixel || true
-          haxelib run lime setup || true
+
+          # ── ★★ 绝对不要跑 `haxelib run lime setup`（不带参数）★★ ──
+          #
+          # 第 2 次 CI 就是被它坑死的。它会装一整套「lime 推荐套件」
+          # （box2d / layout / systools / flixel-demos / flixel-tools / ...），
+          # 而且**装的都是最新版，还会把 current 版本指过去**。
+          # 实测它把版本矩阵整个掀了（haxelib list 输出，方括号里是 current）：
+          #     flixel-addons: 2.10.0 [4.0.2]     lime:    7.9.0 [8.3.2]
+          #     flixel-ui:     2.3.3  [2.6.5]     openfl:  9.1.0 [9.5.2]
+          #     hxcpp:         4.2.1  [4.3.2]     hscript: 2.0.7 [2.7.0]
+          #     actuate:       1.8.7  [1.9.0]
+          # 然后编译炸在这个（Haxe 编译期 #error）：
+          #     flixel-addons/4,0,2/.../FlxTransitionableState.hx:6
+          #     Flixel-Addons is not compatible with flixel versions older than 5.3.0
+          # 而我当时给它加了 `|| true`，把这件事完全掩盖了 —— 别再加回来。
+          #
+          # 编译根本不需要它：Project.xml 里声明的库上面全都装过了。
+          # `lime setup flixel` 也一样（只装 templates/demos/tools），一并删。
 
           # ── polymod：★ 这里和原版 KE 的 windows.yml 不一样，是修过的 ──
           #
@@ -122,7 +141,43 @@ jobs:
           haxelib git linc_luajit https://github.com/nebulazorua/linc_luajit.git --quiet
           haxelib git hxvm-luajit https://github.com/nebulazorua/hxvm-luajit --quiet
 
-          haxelib list
+          # ── 版本守卫 ──────────────────────────────────────────────
+          # haxelib list 输出的格式是：`<name>: <其它版本> [<current 版本>]`
+          # 方括号里那个才是真正会被用到的版本。
+          #
+          # 上面辛辛苦苦锁好的版本，只要后面多加任何一条 haxelib 命令就可能
+          # 被悄悄顶掉（第 2 次 CI 就是被 `lime setup` 顶掉，然后编译炸掉的），
+          # 而且报错信息（"not compatible with flixel versions older than 5.3.0"）
+          # 跟真正的原因隔了十万八千里。所以这里显式校验一遍，错了立刻停。
+          haxelib list | tee haxelib-list.txt
+
+          fail=0
+          check() {
+            local name="$1" want="$2" line cur
+            # 注意：别给 ${name} 套花括号。`^{flixel}:` 里的 {} 在 ERE 中是字面
+            # 字符，会去匹配 "{flixel}:"，一条都匹配不到，守卫就全变成误报了。
+            line=$(grep -E "^${name}:" haxelib-list.txt || true)
+            cur=$(printf '%s' "$line" | grep -oE '\[[^]]*\]' | tr -d '[]')
+            if [ "$cur" = "$want" ]; then
+              echo "  OK    $name = $cur"
+            else
+              echo "::error::$name 版本不对：期望 $want，实际 ${cur:-<未安装>}"
+              fail=1
+            fi
+          }
+          check flixel 4.9.0
+          check flixel-addons 2.10.0
+          check flixel-ui 2.3.3
+          check lime 7.9.0
+          check openfl 9.1.0
+          check hxcpp 4.2.1
+          check hscript 2.0.7
+          check actuate 1.8.7
+          check polymod 1.4.3
+          if [ "$fail" != "0" ]; then
+            echo "::error::版本守卫没过 —— 先把上面标红的对不上的修好，别往下编译了"
+            exit 1
+          fi
 
       - name: 重编 extension-webm（原生库）
         shell: bash
