@@ -435,6 +435,11 @@ class PlayState extends MusicBeatState
 
 		FlxCamera.defaultCameras = [camGame];
 
+		// ===== KFE: 画质选项 —— 动态模糊 =====
+		// camGame 是本类的 private 字段（PlayState.hx:204），KFEGraphics
+		// 够不到它；所以由这里主动登记，登记时会顺带套上当前设置。
+		KFEGraphics.registerCamera(camGame);
+
 		persistentUpdate = true;
 		persistentDraw = true;
 

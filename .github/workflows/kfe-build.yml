@@ -52,20 +52,37 @@ jobs:
           mkdir -p "$HAXELIB_PATH"
           haxelib setup "$HAXELIB_PATH"
 
-          # ── 固定版本的核心库（KE 1.8 时代配套） ──
-          haxelib install lime 7.9.0 --quiet
-          haxelib install openfl 9.1.0 --quiet
-          haxelib install flixel 4.9.1 --quiet
-          haxelib install flixel-addons 2.9.1 --quiet
-          haxelib install flixel-ui 2.3.4 --quiet
-          haxelib install hscript 2.0.7 --quiet
-          haxelib install actuate 1.8.7 --quiet
-          haxelib install flixel-tools --quiet
-          haxelib install format --quiet
-          haxelib install hxcpp --quiet
+          # ── hxcpp 必须先装、且必须锁版本 ──
+          # Haxe 4.1.5 是 2021 年的编译器，带不动 hxcpp 4.3.x（那个要 Haxe 4.2+）。
+          # 4.2.1 是这一代的配套版本。不显式装的话，lime 会把 haxelib 上
+          # 最新的 hxcpp（4.3.x）拉下来，然后 hxcpp 自己的构建脚本就会挂。
+          haxelib install hxcpp 4.2.1
 
-          haxelib run lime setup flixel --quiet || true
-          haxelib run lime setup --quiet || true
+          # ── 核心库：每个版本都必须写死 ──
+          # 为什么不能省版本号：flixel 的 include.xml 只声明依赖 openfl、且不锁版本；
+          # flixel-addons / flixel-ui 连依赖都不声明。haxelib 碰到「不锁版本」的
+          # 依赖会直接装最新的（现在的 flixel 6.x），而 6.x 要求 lime 8.x ——
+          # 和我们锁死的 lime 7.9.0 正面对撞。所以这一串必须全写。
+          #
+          # 下面每个版本号都在 lib.haxe.org 上逐个核实过存在（HTTP 200）：
+          #   lime 7.9.0 / openfl 9.1.0 / flixel 4.9.0
+          #   flixel-addons 2.10.0 / flixel-ui 2.3.3 / hscript 2.0.7 / actuate 1.8.7
+          #
+          # ⚠️ 反面清单：flixel 4.9.1、flixel-addons 2.9.1、flixel-ui 2.3.4
+          #    这三个版本号在 haxelib 上**根本不存在**（404），它们是凭印象瞎写
+          #    的，会直接把 CI 卡死在装依赖这一步。别照抄。
+          haxelib install lime 7.9.0
+          haxelib install openfl 9.1.0
+          haxelib install flixel 4.9.0
+          haxelib install flixel-addons 2.10.0
+          haxelib install flixel-ui 2.3.3
+          haxelib install hscript 2.0.7
+          haxelib install actuate 1.8.7
+
+          # 注意：这里一律不加 --quiet。haxelib 的位置参数是
+          # `install <name> [version]`，多塞一个 --quiet 有被当成 version 的风险。
+          haxelib run lime setup flixel || true
+          haxelib run lime setup || true
 
           # ── 必须是 git 版本（haxelib 上没有对应发布） ──
           haxelib git faxe https://github.com/uhrobots/faxe --quiet || true

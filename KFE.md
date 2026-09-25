@@ -21,19 +21,22 @@
 
 ## 相对原版 KE 1.8 的改动
 
-### 改动的文件（3 个）
+### 改动的文件（4 个）
 
 | 文件 | 改了什么 |
 |---|---|
 | `source/ModchartState.hx` | 加载路径改 6 条候选探测；`executeState` 改命运扇出 + 补弹栈；注入 `curStage`/`storyMode`；新增 7 个回调（`playSound`/`stopSound`/`playMusic`/`cameraFade`/`pushWarnNote`/`getOption`/`makeSpriteEx`）；判定线改双方言命名；**`setVar` 改类型感知** |
-| `source/PlayState.hx` | `executeModchart` 多候选判定；角色/相机别名注册；修正 `camNotes` 绑定；警告音符命中回调；`unspawnNotes` 放开可见性 |
+| `source/PlayState.hx` | `executeModchart` 多候选判定；角色/相机别名注册；修正 `camNotes` 绑定；警告音符命中回调；`unspawnNotes` 放开可见性；**向画质层登记 `camGame`** |
 | `source/Note.hx` | 新增 `kfeWarning` / `kfeFake` 字段 + `setKfeWarningGraphic()`（模组 `bob/CustomNotes` 图集） |
+| `source/OptionsMenu.hx` | Appearance 分组尾部追加「动态模糊」与「渲染后端」两个选项（不动任何既有选项） |
 
-### 新增的文件（1 个）
+### 新增的文件（3 个）
 
 | 文件 | 作用 |
 |---|---|
 | `source/KFECompat.hx` | 方言兼容层：路径候选表 / hook 别名表 / 多名字注册 / 存档开关 |
+| `source/KFEGraphics.hx` | 画质选项：动态模糊强度 + 渲染后端切换（含两个 `Option` 子类） |
+| `source/KFEBlurShader.hx` | 动态模糊着色器（单帧径向多 tap 近似，非物理准确） |
 
 > 刻意**不碰 `Lua_helper`**：它的 Haxe 模块路径无法从工程内确定，
 > 所有新增能力都走已经确定可用的 `Lua_helper.add_callback(lua, ...)` 入口。
@@ -58,8 +61,10 @@
 `.github/workflows/kfe-build.yml` 会在 `windows-latest` 上自动：
 
 1. 装 Haxe 4.1.5
-2. 装 lime 7.9.0 / openfl 9.1.0 / flixel 4.9.1 …… 以及 git 版的
-   `polymod` / `discord_rpc` / `extension-webm` / **`linc_luajit`** / **`hxvm-luajit`**
+2. 装**锁定版本**的 `hxcpp 4.2.1` / `lime 7.9.0` / `openfl 9.1.0` / `flixel 4.9.0` /
+   `flixel-addons 2.10.0` / `flixel-ui 2.3.3` / `hscript 2.0.7` / `actuate 1.8.7`，
+   以及 git 版的 `polymod` / `discord_rpc` / `extension-webm` /
+   **`linc_luajit`** / **`hxvm-luajit`**
 3. `lime rebuild extension-webm windows`（原生库，必须重编）
 4. `lime build windows -release`
 5. 上传 artifact **`KFE-windows`**
@@ -86,6 +91,7 @@
 - `setVar` 类型感知（修掉 KE 一直以来的「Bool 被推成数字、Lua 里 0 是真值」问题）
 - 7 个新回调
 - 警告音符注入 + 图集
+- 画质选项：动态模糊（4 档，即时生效）+ 渲染后端切换（含一键重启）
 
 **未落地**（Phase 2）：
 
@@ -107,6 +113,36 @@
 **不能替代真实编译**。
 
 这个 workflow 的存在就是为了补上这一环。
+
+---
+
+## 画质选项
+
+Appearance 分组里新增两项（实现见 `source/KFEGraphics.hx`）：
+
+| 选项 | 档位 | 生效方式 |
+|---|---|---|
+| `Motion Blur` | off / low / medium / high | 即时（纯 shader） |
+| `Renderer` | Auto / OpenGL / **Direct3D 11 (via ANGLE)** / Software | 需重启，按一下即重启 |
+
+关于「DX11」这件事必须说清楚：
+
+> **Lime 7.9.0 的 `RenderContextType` 枚举里没有 `d3d11`。**
+> 全部取值只有 `cairo / canvas / dom / flash / opengl / opengles / webgl / custom`。
+> 往里传 `d3d11` 会被丢掉，什么都不会发生 —— 那种「DX11 开关」是假的。
+>
+> Windows 上真正走 D3D 的路径是 **ANGLE**：Lime 仓库自带的
+> `dependencies/angle/` 里放着 `d3dcompiler_47.dll`（3.4 MB，D3D 的 HLSL 编译器）
+> 和 `libegl.dll` / `libglesv2.dll`。GLES 调用经 EGL → ANGLE → 转译成 D3D11。
+>
+> 所以本引擎里的「DX11」档，实际传的是 `--window-render-type=opengles`，
+> UI 上老老实实标成 `Direct3D 11 (via ANGLE)`。
+
+**动态模糊也不是物理正确的运动模糊**，是单帧径向多 tap 的**近似**
+（真运动模糊要帧历史 / 速度缓冲，这条管线拿不到）。
+所以文档里写「近似」，不写「运动模糊」。
+
+完整取证链见 `docs/06_画质选项.md`。
 
 ---
 
