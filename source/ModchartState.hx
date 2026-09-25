@@ -510,8 +510,6 @@ class ModchartState
 			FlxG.switchState(new FreeplayState());
 			return;
 		}
-			return;
-		}
 
 		// get some fukin globals up in here bois
 
@@ -664,12 +662,9 @@ class ModchartState
 		for (i in 0...PlayState.strumLineNotes.length)
 		{
 			var member = PlayState.strumLineNotes.members[i];
-		// ===== KFE: 判定线双方言命名 =====
-		// KE 叫什么都能对上: receptor_0..7  ←→  leftDadNote/leftPlrNote...
-		// 依据: LE/PlayState.hx:464/468 的注册点
-		for (i in 0...PlayState.strumLineNotes.length)
-		{
-			var member = PlayState.strumLineNotes.members[i];
+			// ===== KFE: 判定线双方言命名 =====
+			// KE 叫什么都能对上: receptor_0..7  ←→  leftDadNote/leftPlrNote...
+			// 依据: LE/PlayState.hx:464/468 的注册点
 			KFECompat.registerAliased(new LuaReceptor(member, "receptor_" + i), lua,
 				KFECompat.receptorAliases(i));
 		}
