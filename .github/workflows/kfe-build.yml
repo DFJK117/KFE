@@ -84,13 +84,39 @@ jobs:
           haxelib run lime setup flixel || true
           haxelib run lime setup || true
 
+          # ── polymod：★ 这里和原版 KE 的 windows.yml 不一样，是修过的 ──
+          #
+          # 原版 KE 1.8 写的是 `haxelib git polymod https://github.com/MasterEric/polymod.git`，
+          # 但这个仓库现在**已经 404 了**（实测：`gh api repos/MasterEric/polymod` → Not Found）。
+          # 第一次 CI 就是死在这一步：
+          #     Installing polymod from https://github.com/MasterEric/polymod.git
+          #     Error: Could not clone Git repository.
+          #
+          # polymod 现在的家是 FunkinCrew/polymod（实测 larsiusprime/polymod 301 → FunkinCrew/polymod）。
+          # 但**不能直接用它的 master**：master(=1.8.0) 把
+          #     scan(modRoot:String, ...)     改成了  scan(?scanParams:ScanParams)
+          # 而 KE 的 ModCore.hx 调的是 Polymod.scan(MOD_DIRECTORY)（传字符串），会类型不匹配。
+          # 实测 scan(String) 的最后一个版本是 v1.6.0，v1.8.0 才改掉。
+          #
+          # 所以这里锁 1.4.3：
+          #   - haxelib 上确实有这个发布版（lib.haxe.org/p/polymod/1.4.3 → HTTP 200）
+          #     （1.0 / 1.1 / 1.2 在 haxelib 上都是 404，只有 1.3.0 起才有发布）
+          #   - PolymodParams 字段全齐：modRoot/dirs/framework/frameworkParams/apiVersion/
+          #     errorCallback/parseRules/ignoredFiles/customBackend —— ModCore.hx 用到的都在
+          #   - PolymodAssetType 是 `enum abstract ... from String`，
+          #     所以 KE 的 Polymod.listModFiles("IMAGE") 传字符串是合法的
+          haxelib install polymod 1.4.3
+
           # ── 必须是 git 版本（haxelib 上没有对应发布） ──
+          # faxe 只在 switch 平台需要（Project.xml: <haxelib name="faxe" if='switch'/>），
+          # Windows 用不到；haxelib 上也查无此库。装不上就算了。
           haxelib git faxe https://github.com/uhrobots/faxe --quiet || true
-          haxelib git polymod https://github.com/MasterEric/polymod.git --quiet
           haxelib git discord_rpc https://github.com/Aidan63/linc_discord-rpc --quiet
 
           # ── extension-webm：KadeDev 分支，且必须本地重编 ──
-          haxelib git extension-webm https://github.com/KadeDev/extension-webm --quiet
+          # KadeDev 这个账号已经改名成 Kade-github（实测 301 重定向）。
+          # git clone 虽然会跟随重定向，但这里直接写现名，少一个失败点。
+          haxelib git extension-webm https://github.com/Kade-github/extension-webm --quiet
 
           # ── ★ Lua 运行时（ModchartState/LuaClass 里 import llua.* 就来自这里） ──
           haxelib git linc_luajit https://github.com/nebulazorua/linc_luajit.git --quiet
