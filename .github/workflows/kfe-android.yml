@@ -110,22 +110,26 @@ jobs:
       - name: 安装依赖
         run: |
           set -e
+          set -o pipefail
           mkdir -p "$HAXELIB_PATH"
-          haxelib setup "$HAXELIB_PATH"
-          haxelib install hxcpp 4.3.2
-          haxelib install lime 7.9.0
-          haxelib install openfl 9.1.0
-          haxelib install flixel 4.9.0
-          haxelib install flixel-addons 2.10.0
-          haxelib install flixel-ui 2.3.3
-          haxelib install hscript 2.0.7
-          haxelib install actuate 1.9.0
-          haxelib install polymod 1.4.3
-          haxelib git faxe https://github.com/uhrobots/faxe || true
-          haxelib git discord_rpc https://github.com/Aidan63/linc_discord-rpc
-          haxelib git extension-webm https://github.com/Kade-github/extension-webm
+          haxelib setup "$HAXELIB_PATH" 2>&1 | tee -a build.log
+          # ★ 全部逐条 tee 进 build.log：无论死在哪条安装上，失败时诊断步骤
+          #   都能把报错尾部推到 ci-diag（此前 install 的报错只进主日志，
+          #   build.log 是空的，诊断等于瞎的）。
+          haxelib install hxcpp 4.3.2 2>&1 | tee -a build.log
+          haxelib install lime 7.9.0 2>&1 | tee -a build.log
+          haxelib install openfl 9.1.0 2>&1 | tee -a build.log
+          haxelib install flixel 4.9.0 2>&1 | tee -a build.log
+          haxelib install flixel-addons 2.10.0 2>&1 | tee -a build.log
+          haxelib install flixel-ui 2.3.3 2>&1 | tee -a build.log
+          haxelib install hscript 2.0.7 2>&1 | tee -a build.log
+          haxelib install actuate 1.9.0 2>&1 | tee -a build.log
+          haxelib install polymod 1.4.3 2>&1 | tee -a build.log
+          haxelib git faxe https://github.com/uhrobots/faxe 2>&1 | tee -a build.log || true
+          haxelib git discord_rpc https://github.com/Aidan63/linc_discord-rpc 2>&1 | tee -a build.log
+          haxelib git extension-webm https://github.com/Kade-github/extension-webm 2>&1 | tee -a build.log
           # 注意：linc_luajit / hxvm-luajit 是 if="desktop"，Android 下不需要
-          haxelib list | tee haxelib-list.txt
+          haxelib list 2>&1 | tee -a build.log | tee haxelib-list.txt
 
       # ★ lime 7.9 在跑 android 目标前必须先「配置」一次 android 工具链，
       #   否则 rebuild/build 会直接报：
@@ -302,6 +306,7 @@ jobs:
           git config user.name "KFE CI Bot"
           # 只取尾部 3000 行，足够看报错，又不会把巨大的完整日志塞进 git 对象
           tail -n 3000 build.log > build.diag.log 2>/dev/null || true
-          git add -f build.diag.log memlog.txt 2>/dev/null || true
+          git add -f build.diag.log 2>/dev/null || true
+          git add -f memlog.txt 2>/dev/null || true
           git commit -m "ci-diag: android build.log run ${{ github.run_id }}" || echo "无新增内容"
           git push "https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git" HEAD:ci-diag --force || echo "push 失败"
