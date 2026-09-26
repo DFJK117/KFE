@@ -23,6 +23,8 @@ on:
 jobs:
   build-windows:
     runs-on: windows-latest
+    permissions:
+      contents: write
     # 原来 90 分钟。第 4 次跑了 38 分钟才 OOM，说明编译本身就很慢；
     # 现在又把并发压到 2、并加了 --no-opt，时间只会更长。
     # GitHub job 的硬上限是 6 小时，这里给到 5 小时。
@@ -60,14 +62,15 @@ jobs:
         shell: bash
         run: |
           set -e
+          set -o pipefail
           mkdir -p "$HAXELIB_PATH"
-          haxelib setup "$HAXELIB_PATH"
+          haxelib setup "$HAXELIB_PATH" 2>&1 | tee -a build.log
 
           # ── hxcpp 必须先装、且必须锁版本 ──
           # Haxe 4.1.5 是 2021 年的编译器，带不动 hxcpp 4.3.x（那个要 Haxe 4.2+）。
           # 4.2.1 是这一代的配套版本。不显式装的话，lime 会把 haxelib 上
           # 最新的 hxcpp（4.3.x）拉下来，然后 hxcpp 自己的构建脚本就会挂。
-          haxelib install hxcpp 4.2.1
+          haxelib install hxcpp 4.2.1 2>&1 | tee -a build.log
 
           # ── 核心库：每个版本都必须写死 ──
           # 为什么不能省版本号：flixel 的 include.xml 只声明依赖 openfl、且不锁版本；
@@ -88,13 +91,13 @@ jobs:
           # ⚠️ 反面清单：flixel 4.9.1、flixel-addons 2.9.1、flixel-ui 2.3.4
           #    这三个版本号在 haxelib 上**根本不存在**（404），它们是凭印象瞎写
           #    的，会直接把 CI 卡死在装依赖这一步。别照抄。
-          haxelib install lime 7.9.0
-          haxelib install openfl 9.1.0
-          haxelib install flixel 4.9.0
-          haxelib install flixel-addons 2.10.0
-          haxelib install flixel-ui 2.3.3
-          haxelib install hscript 2.0.7
-          haxelib install actuate 1.9.0
+          haxelib install lime 7.9.0 2>&1 | tee -a build.log
+          haxelib install openfl 9.1.0 2>&1 | tee -a build.log
+          haxelib install flixel 4.9.0 2>&1 | tee -a build.log
+          haxelib install flixel-addons 2.10.0 2>&1 | tee -a build.log
+          haxelib install flixel-ui 2.3.3 2>&1 | tee -a build.log
+          haxelib install hscript 2.0.7 2>&1 | tee -a build.log
+          haxelib install actuate 1.9.0 2>&1 | tee -a build.log
 
           # 注意：这里一律不加 --quiet。haxelib 的位置参数是
           # `install <name> [version]`，多塞一个 --quiet 有被当成 version 的风险。
@@ -138,22 +141,22 @@ jobs:
           #     errorCallback/parseRules/ignoredFiles/customBackend —— ModCore.hx 用到的都在
           #   - PolymodAssetType 是 `enum abstract ... from String`，
           #     所以 KE 的 Polymod.listModFiles("IMAGE") 传字符串是合法的
-          haxelib install polymod 1.4.3
+          haxelib install polymod 1.4.3 2>&1 | tee -a build.log
 
           # ── 必须是 git 版本（haxelib 上没有对应发布） ──
           # faxe 只在 switch 平台需要（Project.xml: <haxelib name="faxe" if='switch'/>），
           # Windows 用不到；haxelib 上也查无此库。装不上就算了。
-          haxelib git faxe https://github.com/uhrobots/faxe --quiet || true
-          haxelib git discord_rpc https://github.com/Aidan63/linc_discord-rpc --quiet
+          haxelib git faxe https://github.com/uhrobots/faxe --quiet 2>&1 | tee -a build.log || true
+          haxelib git discord_rpc https://github.com/Aidan63/linc_discord-rpc --quiet 2>&1 | tee -a build.log
 
           # ── extension-webm：KadeDev 分支，且必须本地重编 ──
           # KadeDev 这个账号已经改名成 Kade-github（实测 301 重定向）。
           # git clone 虽然会跟随重定向，但这里直接写现名，少一个失败点。
-          haxelib git extension-webm https://github.com/Kade-github/extension-webm --quiet
+          haxelib git extension-webm https://github.com/Kade-github/extension-webm --quiet 2>&1 | tee -a build.log
 
           # ── ★ Lua 运行时（ModchartState/LuaClass 里 import llua.* 就来自这里） ──
-          haxelib git linc_luajit https://github.com/nebulazorua/linc_luajit.git --quiet
-          haxelib git hxvm-luajit https://github.com/nebulazorua/hxvm-luajit --quiet
+          haxelib git linc_luajit https://github.com/nebulazorua/linc_luajit.git --quiet 2>&1 | tee -a build.log
+          haxelib git hxvm-luajit https://github.com/nebulazorua/hxvm-luajit --quiet 2>&1 | tee -a build.log
 
           # ── 版本守卫 ──────────────────────────────────────────────
           # haxelib list 输出的格式是：`<name>: <其它版本> [<current 版本>]`
@@ -251,8 +254,14 @@ jobs:
 
       - name: 编译 windows -release
         shell: bash
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           set -e
+          git config user.email "ci@users.noreply.github.com"
+          git config user.name "KFE CI Bot"
+          # 【KFE 诊断】心跳：每 60s 把 build.log 尾部 + 内存/页面文件快照推到
+          # ci-diag 分支；无论编译进程怎么死，死前 1 分钟的现场必在远端。
 
           # 后台每分钟记一次内存，写进 memlog.txt。
           # 为什么需要：GitHub 自己的日志**完全不打印**内存，前两次 OOM 都是
@@ -266,7 +275,17 @@ jobs:
                 '{0} avail={1}MB commitLimit={2}MB' -f (Get-Date -Format HH:mm:ss),
                   [math]::Round(\$os.FreePhysicalMemory/1KB),
                   [math]::Round([double]\$os.TotalVirtualMemorySize/1KB)
+                Get-Process haxe -ErrorAction SilentlyContinue | ForEach-Object {{
+                  'haxe WS(GB): ' + [math]::Round(\$_.WorkingSet64/1GB,2) + '  PM(GB): ' + [math]::Round(\$_.PagedMemorySize64/1GB,2)
+                }}
               " >> memlog.txt 2>&1 || true
+              if [ -f build.log ]; then
+                tail -n 300 build.log > build.diag.log 2>/dev/null || true
+                cat memlog.txt >> build.diag.log 2>/dev/null || true
+                git add -f build.diag.log 2>/dev/null || true
+                git commit -m "ci-diag-win heartbeat $(date +%H:%M:%S)" >/dev/null 2>&1 || true
+                git push -f "https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git" HEAD:ci-diag >/dev/null 2>&1 || true
+              fi
               sleep 60
             done
           ) &
@@ -275,7 +294,7 @@ jobs:
           # set +e：编译挂了也要把内存曲线和产出目录打出来，
           # 否则 set -e 会直接退出，什么都看不到。
           set +e
-          haxelib run lime build windows -release
+          haxelib run lime build windows -release -verbose > build.log 2>&1
           RC=$?
           kill $MEMPID 2>/dev/null || true
 
@@ -283,7 +302,20 @@ jobs:
           cat memlog.txt || true
           echo "--- 产出目录 ---"
           ls -la export/release/windows/bin || true
-          exit $RC
+
+          if [ "$RC" -ne 0 ]; then
+            echo "!! 编译失败，原始退出码 $RC（规范化为 1）"
+            echo "--- build.log 末尾 80 行 ---"
+            tail -n 80 build.log || true
+            # 失败现场推到 ci-diag，本机 git 拉取即可读
+            tail -n 3000 build.log > build.diag.log 2>/dev/null || true
+            git add -f build.diag.log 2>/dev/null || true
+            git add -f memlog.txt 2>/dev/null || true
+            git commit -m "ci-diag-win: windows build.log run ${{ github.run_id }}" >/dev/null 2>&1 || true
+            git push -f "https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git" HEAD:ci-diag >/dev/null 2>&1 || true
+            exit 1
+          fi
+          exit 0
 
       - name: 上传产物
         uses: actions/upload-artifact@v4
