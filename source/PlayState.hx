@@ -146,8 +146,7 @@ class PlayState extends MusicBeatState
 
 	public var notes:FlxTypedGroup<Note>;
 
-	// KFE: 由 ModchartState.kfePushWarnNote() 注入警告音符，故改为 public
-	public var unspawnNotes:Array<Note> = [];
+	private var unspawnNotes:Array<Note> = [];
 
 	public var strumLine:FlxSprite;
 
@@ -357,8 +356,9 @@ class PlayState extends MusicBeatState
 
 		#if FEATURE_LUAMODCHART
 		// TODO: Refactor this to use OpenFlAssets.
-		// ===== KFE: 多方言 modchart 存在性判定 =====
-		executeModchart = KFECompat.hasModchart();
+		executeModchart = FileSystem.exists(Paths.lua('songs/${PlayState.SONG.songId}/modchart'));
+		if (isSM)
+			executeModchart = FileSystem.exists(pathToSm + "/modchart.lua");
 		if (executeModchart)
 			PlayStateChangeables.Optimize = false;
 		#end
@@ -434,11 +434,6 @@ class PlayState extends MusicBeatState
 		camHUD.zoom = PlayStateChangeables.zoom;
 
 		FlxCamera.defaultCameras = [camGame];
-
-		// ===== KFE: 画质选项 —— 动态模糊 =====
-		// camGame 是本类的 private 字段（PlayState.hx:204），KFEGraphics
-		// 够不到它；所以由这里主动登记，登记时会顺带套上当前设置。
-		KFEGraphics.registerCamera(camGame);
 
 		persistentUpdate = true;
 		persistentDraw = true;
@@ -812,25 +807,13 @@ class PlayState extends MusicBeatState
 		#if FEATURE_LUAMODCHART
 		if (executeModchart)
 		{
-			// ===== KFE: 相机 / 角色双方言命名 =====
-			// KE: camGame camHUD camSustains camNotes / boyfriend gf dad
-			// LE: gameCam HUDCam holdCam notesCam receptorCam / bf gf dad
-			// 【偏离上游】原版把 camNotes 也绑到了 camSustains（PlayState.hx:813 的笔误），
-			// KFE 修正为真正的 camNotes 对象。
-			KFECompat.registerAliased(new LuaCamera(camGame, "camGame"), ModchartState.lua,
-				KFECompat.cameraAliases("camGame", "camGame"));
-			KFECompat.registerAliased(new LuaCamera(camHUD, "camHUD"), ModchartState.lua,
-				KFECompat.cameraAliases("camHUD", "camHUD"));
-			KFECompat.registerAliased(new LuaCamera(camSustains, "camSustains"), ModchartState.lua,
-				KFECompat.cameraAliases("camSustains", "camSustains"));
-			KFECompat.registerAliased(new LuaCamera(camNotes, "camNotes"), ModchartState.lua,
-				KFECompat.cameraAliases("camNotes", "camNotes"));
-			KFECompat.registerAliased(new LuaCharacter(dad, "dad"), ModchartState.lua,
-				KFECompat.characterAliases("dad"));
-			KFECompat.registerAliased(new LuaCharacter(gf, "gf"), ModchartState.lua,
-				KFECompat.characterAliases("gf"));
-			KFECompat.registerAliased(new LuaCharacter(boyfriend, "boyfriend"), ModchartState.lua,
-				KFECompat.characterAliases("boyfriend"));
+			new LuaCamera(camGame, "camGame").Register(ModchartState.lua);
+			new LuaCamera(camHUD, "camHUD").Register(ModchartState.lua);
+			new LuaCamera(camSustains, "camSustains").Register(ModchartState.lua);
+			new LuaCamera(camSustains, "camNotes").Register(ModchartState.lua);
+			new LuaCharacter(dad, "dad").Register(ModchartState.lua);
+			new LuaCharacter(gf, "gf").Register(ModchartState.lua);
+			new LuaCharacter(boyfriend, "boyfriend").Register(ModchartState.lua);
 		}
 		#end
 
@@ -4365,11 +4348,6 @@ class PlayState extends MusicBeatState
 			#if FEATURE_LUAMODCHART
 			if (luaModchart != null)
 				luaModchart.executeState('playerOneSing', [note.noteData, Conductor.songPosition]);
-				// ===== KFE: 警告音符被打中 → 交回 Lua 处理掉血 =====
-				// 原版是在这里直接调 HealthDrain()（bobsrc/PlayState.hx:3586）；
-				// KFE 把它交回 modchart 的 kfeWarnHit()，机制留在 Lua 里可读可改。
-				if (note.kfeWarning)
-					luaModchart.executeState('kfeWarnHit', [note.noteData]);
 			#end
 
 			if (!loadRep && note.mustPress)

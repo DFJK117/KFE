@@ -56,34 +56,6 @@ class Note extends FlxSprite
 	public var rating:String = "shit";
 
 	public var modAngle:Float = 0; // The angle set by modcharts
-
-	// ===== KFE: 警告音符标记 =====
-	// 对应原 Bob's Onslaught 的 Note(..., _warning, _mustHitNotes) 两个参数。
-	public var kfeWarning:Bool = false;  // 必须打，打中掉血
-	public var kfeFake:Bool = false;     // 不许打
-
-	/** 换成模组的 CustomNotes 图集。原版实现见 bobsrc/Note.hx:69-107。 */
-	public function setKfeWarningGraphic():Void
-	{
-		frames = Paths.getSparrowAtlas('bob/CustomNotes');
-		if (kfeWarning)
-		{
-			animation.addByPrefix('greenScroll', 'vertedUp');
-			animation.addByPrefix('redScroll', 'vertedRight');
-			animation.addByPrefix('blueScroll', 'vertedDown');
-			animation.addByPrefix('purpleScroll', 'vertedLeft');
-		}
-		else
-		{
-			animation.addByPrefix('greenScroll', 'hitUp');
-			animation.addByPrefix('redScroll', 'hitRight');
-			animation.addByPrefix('blueScroll', 'hitDown');
-			animation.addByPrefix('purpleScroll', 'hitLeft');
-		}
-		setGraphicSize(Std.int(width * 0.7));
-		updateHitbox();
-		antialiasing = true;
-	}
 	public var localAngle:Float = 0; // The angle to be edited inside Note.hx
 	public var originAngle:Float = 0; // The angle the OG note of the sus note had (?)
 
