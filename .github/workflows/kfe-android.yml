@@ -30,6 +30,12 @@ jobs:
     env:
       HAXELIB_PATH: ${{ github.workspace }}/../haxelib
       HXCPP_COMPILE_THREADS: '2'
+      # ★ rebuild 原生库（extension-webm）时必须指明 Android 架构，否则 hxcpp 直接报：
+      #     Error: Please set one of the architectures, eg HXCPP_ARM64, HXCPP_X86, ...
+      #   设两个架构，rebuild 会编出对应 ndll，lime build android 也编两种 ABI，
+      #   不会因为「只编了 arm64 但 build 想要 armv7」之类不匹配再失败一轮。
+      HXCPP_ARM64: '1'
+      HXCPP_ARMV7: '1'
       # lime 7.9 这一代用的是比较老的 Android SDK/NDK/Gradle 组合，
       # 用太新的反而编不过，这里按它的年代挑版本。
       ANDROID_SDK_ROOT: ${{ github.workspace }}/android-sdk
