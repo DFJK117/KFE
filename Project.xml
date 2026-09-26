@@ -225,4 +225,11 @@
        出品的 exe 不会因此变慢。 -->
   <haxeflag name="--no-opt" />
 
+  <!-- 【KFE 2026-09-26】Android 编译实测：haxe 进程吃到 14.8GB、15GB 物理内存
+       + 8GB swap 全部耗尽后被内核干掉（runner 法医快照实锤）。
+       内联展开是 haxe 编译期内存峰值的大头之一，禁用后通常省 30~50% 内存。
+       代价：运行时函数调用不被展开、稍慢——先保证能编出 APK，性能以后再调。
+       只对 android 生效，桌面端不受影响。 -->
+  <haxeflag name="--no-inline" if="android" />
+
 </project>
