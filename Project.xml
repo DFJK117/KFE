@@ -226,6 +226,10 @@
        注意：这只影响「haxe 生成 C++」这一步，C++ 仍然由 cl.exe 用 /O2 优化，
        出品的 exe 不会因此变慢。 -->
   <haxeflag name="--no-opt" />
+  <!-- 【2026-09-26 实验三】analyzer-optimize 是 haxe 编译期内存的最大单个消耗者
+       （dataflow 分析 pass，4.x 默认开启）。--no-opt 只关表达式优化，
+       关不住它。禁用后社区实测省 30~60% 编译内存，代价是生成代码稍慢。 -->
+  <haxeflag name="--no-analyzer-optimize" />
 
   <!-- 【KFE 2026-09-26】Android 编译实测：haxe 进程吃到 14.8GB、15GB 物理内存
        + 8GB swap 全部耗尽后被内核干掉（runner 法医快照实锤）。
