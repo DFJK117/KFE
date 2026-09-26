@@ -17,9 +17,13 @@
 
 name: KFE Build (Linux)
 
+# 目标产物只有 Windows（exe）和 Android（apk）。
+# 这条 Linux 桌面端不是交付目标，只用来做诊断：
+#   Windows 上 haxe 编译 OOM（提交上限 18.87GB），
+#   同样的编译放到 Linux runner 上就没有那个硬限制，
+#   所以它跑通与否能回答「到底是不是内存天花板的问题」。
+# 因此改成只手动触发，不跟着每次 push 跑，省机器也省眼。
 on:
-  push:
-    branches: [main, master, dev]
   workflow_dispatch:
 
 jobs:

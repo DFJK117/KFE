@@ -1,0 +1,163 @@
+# KFE 的 Android 编译
+#
+# 目标产物只有两个：Windows（exe）和 Android（apk）。
+# Linux 桌面端不是目标，已降级为手动触发（留着当诊断工具）。
+#
+# 为什么 Android 反倒有可能编得出来：
+#   Windows 那条一直挂在 haxe 进程 OOM，天花板是 Windows 的「提交上限」
+#   = 物理内存 16GB + 页面文件 2.9GB = 18.87GB。
+#   这个 job 跑在 Linux runner 上，没有那套硬限制，
+#   haxe 阶段（两个平台都一样）说不定就过去了。
+#
+# ⚠️ 已知限制，先写清楚别装：
+#   linc_luajit / hxvm-luajit 在 Project.xml 里是 if="desktop" 装的，
+#   FEATURE_LUAMODCHART 也只放宽到 desktop。
+#   所以 **Android 版本不带 Lua modchart 层**（LuaJIT 原生库要另做移动端适配）。
+#   其余兼容能力（资源加载、别名注册、警告音符等）照常编进去。
+
+name: KFE Build (Android)
+
+on:
+  push:
+    branches: [main, master, dev]
+  workflow_dispatch:
+
+jobs:
+  build-android:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+
+    env:
+      HAXELIB_PATH: ${{ github.workspace }}/../haxelib
+      HXCPP_COMPILE_THREADS: '2'
+      # lime 7.9 这一代用的是比较老的 Android SDK/NDK/Gradle 组合，
+      # 用太新的反而编不过，这里按它的年代挑版本。
+      ANDROID_SDK_ROOT: ${{ github.workspace }}/android-sdk
+      ANDROID_NDK_ROOT: ${{ github.workspace }}/android-sdk/ndk/21.4.7075529
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # lime/openfl 在 Linux 上编译需要的系统库；
+      # gcc-multilib / g++-multilib 是给 32 位目标准备的（踩过：
+      #   /usr/include/stdint.h: fatal error: bits/libc-header-start.h
+      #   没有那个文件）。
+      - name: 装系统依赖
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libgl1-mesa-dev libglu1-mesa-dev \
+            libx11-dev libxext-dev libxcursor-dev libxrandr-dev \
+            libxi-dev libxinerama-dev \
+            libasound2-dev libpulse-dev \
+            libudev-dev \
+            gcc-multilib g++-multilib
+
+      - name: Setup JDK 11
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '11'
+
+      - name: 装 Android SDK 与 NDK
+        run: |
+          mkdir -p "$ANDROID_SDK_ROOT"
+          cd "$ANDROID_SDK_ROOT"
+          # cmdline-tools
+          curl -sSL -o cmdline.zip \
+            https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip
+          unzip -q cmdline.zip
+          rm cmdline.zip
+          mkdir -p cmdline-tools/latest
+          mv cmdline-tools/bin cmdline-tools/lib cmdline-tools/source.properties \
+             cmdline-tools/NOTICE.txt cmdline-tools/latest/ 2>/dev/null || true
+          export PATH="$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$PATH"
+          yes | sdkmanager --sdk_root="$ANDROID_SDK_ROOT" --licenses > /dev/null 2>&1 || true
+          sdkmanager --sdk_root="$ANDROID_SDK_ROOT" --install \
+            "platform-tools" \
+            "platforms;android-29" \
+            "build-tools;29.0.3" \
+            "ndk;21.4.7075529"
+          echo "--- 装好了 ---"
+          ls "$ANDROID_SDK_ROOT"
+          ls "$ANDROID_NDK_ROOT" | head -5
+
+      - name: Setup Haxe 4.1.5
+        uses: krdlab/setup-haxe@v1
+        with:
+          haxe-version: 4.1.5
+
+      - name: 机器规格（诊断用）
+        run: |
+          free -h
+          nproc
+
+      - name: 安装依赖
+        run: |
+          set -e
+          mkdir -p "$HAXELIB_PATH"
+          haxelib setup "$HAXELIB_PATH"
+          haxelib install hxcpp 4.2.1
+          haxelib install lime 7.9.0
+          haxelib install openfl 9.1.0
+          haxelib install flixel 4.9.0
+          haxelib install flixel-addons 2.10.0
+          haxelib install flixel-ui 2.3.3
+          haxelib install hscript 2.0.7
+          haxelib install actuate 1.8.7
+          haxelib install polymod 1.4.3
+          haxelib git faxe https://github.com/uhrobots/faxe || true
+          haxelib git discord_rpc https://github.com/Aidan63/linc_discord-rpc
+          haxelib git extension-webm https://github.com/Kade-github/extension-webm
+          # 注意：linc_luajit / hxvm-luajit 是 if="desktop"，Android 下不需要
+          haxelib list | tee haxelib-list.txt
+
+      # extension-webm 在 Project.xml 里是无条件加载的（:122），
+      # 所以 Android 也必须有它的 ndll，不然 lime 复制阶段就会报：
+      #   Error: Source path .../ndll/Android/... does not exist
+      - name: 重编 extension-webm（Android）
+        run: haxelib run lime rebuild extension-webm android
+
+      - name: 编译 android -release
+        run: |
+          set -e
+          (
+            while true; do
+              echo "$(date +%H:%M:%S) $(free -m | awk '/^Mem:/{print "used="$3"MB avail="$7"MB"}')" >> memlog.txt
+              sleep 60
+            done
+          ) &
+          MEMPID=$!
+
+          set +e
+          haxelib run lime build android -release
+          RC=$?
+          kill $MEMPID 2>/dev/null || true
+
+          echo "--- 内存曲线（全程）---"
+          cat memlog.txt || true
+          echo "--- 找 APK ---"
+          find export -name "*.apk" -o -name "*.aab" 2>/dev/null | head -10
+          ls -la export/release/android/bin || true
+          exit $RC
+
+      - name: 上传 APK
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: KFE-android
+          path: export/release/android/bin
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: 失败时上传日志
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: KFE-android-logs
+          path: |
+            memlog.txt
+            export/release/android/haxe/log.txt
+          if-no-files-found: warn
+          retention-days: 14
