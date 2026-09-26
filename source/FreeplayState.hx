@@ -270,7 +270,11 @@ class FreeplayState extends MusicBeatState
 				{
 					FlxG.sound.cache(Paths.inst(songId));
 				});
-			}
+			#if FEATURE_FILESYSTEM
+			} // 【KFE 修复】这个 } 只在 FEATURE_FILESYSTEM 分支里负责关闭上面 else 的 {
+			  // Android 不定义 FEATURE_FILESYSTEM，走 #else 单语句分支，不需要它；
+			  // 之前没包起来导致 Android 下括号失衡，报 FreeplayState.hx:277 Unexpected public
+			#end
 		}
 	}
 
