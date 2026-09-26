@@ -176,7 +176,9 @@ jobs:
           MEMPID=$!
 
           set +e
-          haxelib run lime build android -release
+          # 【KFE 诊断】把构建输出抓到 build.log，失败时能发到公开 Issue 让我这边读到
+          # （GitHub 日志接口在我这边要管理员权限，Issue 对公开仓库可匿名读，绕过 403）。
+          haxelib run lime build android -release > build.log 2>&1
           RC=$?
           kill $MEMPID 2>/dev/null || true
 
@@ -203,6 +205,30 @@ jobs:
           name: KFE-android-logs
           path: |
             memlog.txt
+            build.log
             export/release/android/haxe/log.txt
           if-no-files-found: warn
           retention-days: 14
+
+      # 【KFE 诊断】构建失败时，把 build.log 发到公开 Issue（标题带 run id），
+      # 这样即使 GitHub 日志接口要鉴权，我这边也能匿名读到真正的报错。
+      # 此步骤 best-effort：即便没权限创建 Issue 也别影响其它步骤。
+      - name: 把构建报错发到公开 Issue（绕过日志 403）
+        if: failure()
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          BODY="$(cat build.log 2>/dev/null)"
+          if [ -z "$BODY" ]; then BODY="(build.log 为空，失败可能发生在 haxe 编译之前)"; fi
+          {
+            echo "Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            echo
+            echo '```'
+            echo "$BODY"
+            echo '```'
+          } > "${{ github.workspace }}/body.txt"
+          gh issue create \
+            --repo "${{ github.repository }}" \
+            --title "[CI-AUTO] Android build error · run ${{ github.run_id }}" \
+            --body-file "${{ github.workspace }}/body.txt"
