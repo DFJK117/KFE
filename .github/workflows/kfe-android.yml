@@ -127,6 +127,32 @@ jobs:
       - name: 配置 lime android 工具链
         run: haxelib run lime setup android
 
+      # ★ 修 libwebm 在 Android NDK clang 下的编译错误
+      #   上一条 Android 死在 rebuild extension-webm：
+      #     ./libwebm/mkvmuxerutil.cpp:614:7: error: use of undeclared identifier 'read'
+      #     ./libwebm/mkvmuxerutil.cpp:615:7: error: use of undeclared identifier 'close'
+      #   根因：libwebm 用了 POSIX 的 read()/close()/open() 等，却没 include <unistd.h>；
+      #   新版 NDK 的 clang 不再隐式声明它们。Windows 那边 MSVC 有这些符号所以能过，
+      #   只有 Android NDK 会爆。给 libwebm 所有 .c/.cpp 补上 <unistd.h> + <fcntl.h>
+      #   （重复 include 有头文件守卫，无害）。
+      - name: 修 libwebm 的 POSIX include（Android NDK）
+        run: |
+          set -e
+          EWROOT=$(find "$HAXELIB_PATH/extension-webm/git" -maxdepth 1 -mindepth 1 -type d | head -1)
+          echo "extension-webm git root: $EWROOT"
+          if [ -z "$EWROOT" ]; then
+            echo "::error::没找到 extension-webm 的 git 克隆目录"
+            exit 1
+          fi
+          patched=0
+          while IFS= read -r f; do
+            if ! grep -q '#include <unistd.h>' "$f"; then
+              sed -i '1i #include <unistd.h>\n#include <fcntl.h>' "$f"
+              patched=$((patched+1))
+            fi
+          done < <(find "$EWROOT/libwebm" -type f \( -name '*.cpp' -o -name '*.c' \))
+          echo "已给 $patched 个 libwebm 源文件补 unistd.h/fcntl.h"
+
       # extension-webm 在 Project.xml 里是无条件加载的（:122），
       # 所以 Android 也必须有它的 ndll，不然 lime 复制阶段就会报：
       #   Error: Source path .../ndll/Android/... does not exist
