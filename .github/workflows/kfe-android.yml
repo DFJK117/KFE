@@ -132,7 +132,7 @@ jobs:
           haxelib install polymod 1.4.3 2>&1 | tee -a build.log
           haxelib git faxe https://github.com/uhrobots/faxe 2>&1 | tee -a build.log || true
           haxelib git discord_rpc https://github.com/Aidan63/linc_discord-rpc 2>&1 | tee -a build.log
-          haxelib git extension-webm https://github.com/Kade-github/extension-webm 2>&1 | tee -a build.log
+          haxelib git extension-webm https://github.com/Kade-github/extension-webm e398194 2>&1 | tee -a build.log
           # 注意：linc_luajit / hxvm-luajit 是 if="desktop"，Android 下不需要
           haxelib list 2>&1 | tee -a build.log | tee haxelib-list.txt
 

@@ -152,7 +152,7 @@ jobs:
           # ── extension-webm：KadeDev 分支，且必须本地重编 ──
           # KadeDev 这个账号已经改名成 Kade-github（实测 301 重定向）。
           # git clone 虽然会跟随重定向，但这里直接写现名，少一个失败点。
-          haxelib git extension-webm https://github.com/Kade-github/extension-webm --quiet 2>&1 | tee -a build.log
+          haxelib git extension-webm https://github.com/Kade-github/extension-webm e398194 --quiet 2>&1 | tee -a build.log
 
           # ── ★ Lua 运行时（ModchartState/LuaClass 里 import llua.* 就来自这里） ──
           haxelib git linc_luajit https://github.com/nebulazorua/linc_luajit.git --quiet 2>&1 | tee -a build.log
