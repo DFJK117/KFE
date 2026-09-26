@@ -138,25 +138,25 @@ jobs:
       - name: 修 libwebm 的 POSIX include（Android NDK）
         run: |
           set -e
-          # 直接按文件名反查 extension-webm 的源码根，避免 git/ 下还有 tools 等
-          # 同级目录导致 find 抓错根（上一版就栽在这：抓到 git/tools，libwebm 找不到）。
-          F=$(find "$HAXELIB_PATH/extension-webm" -name mkvmuxerutil.cpp 2>/dev/null | head -1)
-          if [ -z "$F" ]; then
-            echo "::error::找不到 mkvmuxerutil.cpp，无法定位 libwebm 源码"
-            exit 1
-          fi
-          ROOT=$(dirname "$F"); ROOT=$(dirname "$ROOT")
-          echo "extension-webm 源码根: $ROOT"
+          # extension-webm 在 haxelib 下可能有多个检出副本（git/<sha>/ 与 git/libs.src/ 等），
+          # lime rebuild 实际编译的是其中一个。上一版只 patch 了第一个就漏了真正的那份
+          # （报错行号 614 一直没变，证明编译用的是没改到的副本）。
+          # 所以这里把 extension-webm 下**所有** mkvmuxerutil.cpp 及其同根的 .c/.cpp 全补上。
           patched=0
-          while IFS= read -r f; do
-            if ! grep -q '#include <unistd.h>' "$f"; then
-              sed -i '1i #include <unistd.h>\n#include <fcntl.h>' "$f"
-              patched=$((patched+1))
-            fi
-          done < <(find "$ROOT" -type f \( -name '*.cpp' -o -name '*.c' \))
+          found=$(find "$HAXELIB_PATH/extension-webm" -name mkvmuxerutil.cpp 2>/dev/null)
+          echo "找到 mkvmuxerutil.cpp 副本数: $(echo "$found" | grep -c .)"
+          while IFS= read -r F; do
+            [ -z "$F" ] && continue
+            ROOT=$(dirname "$F"); ROOT=$(dirname "$ROOT")
+            echo "  patch 根: $ROOT"
+            while IFS= read -r c; do
+              if ! grep -q '#include <unistd.h>' "$c"; then
+                sed -i '1i #include <unistd.h>\n#include <fcntl.h>' "$c"
+                patched=$((patched+1))
+              fi
+            done < <(find "$ROOT" -type f \( -name '*.cpp' -o -name '*.c' \) 2>/dev/null)
+          done < <(printf '%s\n' "$found")
           echo "已给 $patched 个源文件补 unistd.h/fcntl.h"
-          echo "--- 抽查 mkvmuxerutil.cpp 头部 ---"
-          head -3 "$F"
 
       # extension-webm 在 Project.xml 里是无条件加载的（:122），
       # 所以 Android 也必须有它的 ndll，不然 lime 复制阶段就会报：
