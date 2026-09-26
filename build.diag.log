@@ -324,3 +324,8 @@ Running command: BUILD
         'haxe WS(GB): ' + [math]::Round($_.WorkingSet64/1GB,2) + '  PM(GB): ' + 
 [math]::Round($_.PagedMemorySize64/1GB,2)
       
+14:33:36 avail=1075MB commitLimit=24780MB
+
+        'haxe WS(GB): ' + [math]::Round($_.WorkingSet64/1GB,2) + '  PM(GB): ' + 
+[math]::Round($_.PagedMemorySize64/1GB,2)
+      
