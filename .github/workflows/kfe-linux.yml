@@ -1,0 +1,152 @@
+# KFE 的 Linux 编译（Windows 出不来的话走这条）
+#
+# 为什么加这条：
+#   Windows 那条 CI 连着两轮挂在
+#       Fatal error: exception Out of memory
+#   量出来是撞了 Windows 的「提交上限」= 物理内存 16GB + 页面文件 2.9GB
+#   = 18.87GB（页面文件只给了 2.9GB，且改了多半要重启才生效）。
+#
+#   Linux 没有这个硬限制（overcommit 策略宽松得多），而且
+#   **public 仓库用标准 runner 完全免费**，不用花一分钱。
+#
+#   唯一要动的地方：Project.xml 里 FEATURE_LUAMODCHART 原本是 if="windows"，
+#   已放宽成 if="desktop"，否则 Linux 下 KFE 的 Lua 兼容层不参与编译，
+#   编过了也等于没验证。
+#
+# 产出：export/release/linux/bin 下的可执行程序（不是 exe）。
+
+name: KFE Build (Linux)
+
+on:
+  push:
+    branches: [main, master, dev]
+  workflow_dispatch:
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+
+    env:
+      HAXELIB_PATH: ${{ github.workspace }}/../haxelib
+      HXCPP_COMPILE_THREADS: '2'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # lime/openfl 在 Linux 上编译需要这些系统库，缺一个就编不过
+      - name: 装系统依赖
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libgl1-mesa-dev libglu1-mesa-dev \
+            libx11-dev libxext-dev libxcursor-dev libxrandr-dev \
+            libxi-dev libxinerama-dev \
+            libasound2-dev libpulse-dev \
+            libudev-dev
+
+      - name: Setup Haxe 4.1.5
+        uses: krdlab/setup-haxe@v1
+        with:
+          haxe-version: 4.1.5
+
+      - name: 机器规格（诊断 OOM 用）
+        run: |
+          echo "=== 内存 ==="
+          free -h
+          echo "=== CPU ==="
+          nproc
+          echo "=== swap / overcommit ==="
+          cat /proc/sys/vm/overcommit_memory || true
+          cat /proc/sys/vm/overcommit_ratio || true
+
+      - name: 安装依赖
+        run: |
+          set -e
+          mkdir -p "$HAXELIB_PATH"
+          haxelib setup "$HAXELIB_PATH"
+          # 版本和 Windows 那条完全一致，别让它自己飘
+          haxelib install hxcpp 4.2.1
+          haxelib install lime 7.9.0
+          haxelib install openfl 9.1.0
+          haxelib install flixel 4.9.0
+          haxelib install flixel-addons 2.10.0
+          haxelib install flixel-ui 2.3.3
+          haxelib install hscript 2.0.7
+          haxelib install actuate 1.8.7
+          haxelib install polymod 1.4.3
+          haxelib git faxe https://github.com/uhrobots/faxe || true
+          haxelib git discord_rpc https://github.com/Aidan63/linc_discord-rpc
+          haxelib git extension-webm https://github.com/Kade-github/extension-webm
+          haxelib git linc_luajit https://github.com/nebulazorua/linc_luajit.git
+          haxelib git hxvm-luajit https://github.com/nebulazorua/hxvm-luajit
+
+          # 版本守卫：装完必须回读校验，不然被顶掉都不知道
+          haxelib list | tee haxelib-list.txt
+          fail=0
+          check() {
+            local name="$1" want="$2" line cur
+            line=$(grep -E "^${name}:" haxelib-list.txt || true)
+            cur=$(printf '%s' "$line" | grep -oE '\[[^]]*\]' | tr -d '[]')
+            if [ "$cur" = "$want" ]; then
+              echo "  OK    $name = $cur"
+            else
+              echo "::error::$name 版本不对：期望 $want，实际 ${cur:-<未安装>}"
+              fail=1
+            fi
+          }
+          check flixel 4.9.0
+          check flixel-addons 2.10.0
+          check flixel-ui 2.3.3
+          check lime 7.9.0
+          check openfl 9.1.0
+          check hxcpp 4.2.1
+          check hscript 2.0.7
+          check actuate 1.8.7
+          check polymod 1.4.3
+          [ "$fail" = "0" ] || exit 1
+
+      # extension-webm 在 Windows 上要重编；Linux 上 FEATURE_WEBM 是
+      # if="windows" 的，根本不参与编译，所以这里直接跳过，省几分钟。
+      - name: 编译 linux -release
+        run: |
+          set -e
+          (
+            while true; do
+              echo "$(date +%H:%M:%S) $(free -m | awk '/^Mem:/{print "used="$3"MB avail="$7"MB"}')" >> memlog.txt
+              sleep 60
+            done
+          ) &
+          MEMPID=$!
+
+          set +e
+          haxelib run lime build linux -release
+          RC=$?
+          kill $MEMPID 2>/dev/null || true
+
+          echo "--- 内存曲线（全程）---"
+          cat memlog.txt || true
+          echo "--- 产出目录 ---"
+          ls -la export/release/linux/bin || true
+          exit $RC
+
+      - name: 上传产物
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: KFE-linux
+          path: export/release/linux/bin
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: 失败时上传日志
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: KFE-linux-logs
+          path: |
+            memlog.txt
+            export/release/linux/haxe/log.txt
+          if-no-files-found: warn
+          retention-days: 14

@@ -44,6 +44,19 @@ jobs:
           ref: '1.8'
           path: vanilla
 
+      # ★ 第一轮基线就是死在这：5 秒就挂，报的不是 OOM 而是
+      #     actuate/1,8,7/motion/easing/Expo.hx:14-16 : ... Custom property
+      #   主 workflow（KFE）的 Project.xml 里有 --no-opt，不会报这个。
+      #   对照组的原则是「唯一变量 = 源码有没有补丁」，
+      #   所以编译选项也必须拉齐，否则测出来的是选项差异。
+      - name: 给原版也加 --no-opt（拉齐编译选项）
+        shell: bash
+        working-directory: vanilla
+        run: |
+          sed -i 's|</project>|<haxeflag name="--no-opt" />\n</project>|' Project.xml
+          echo "--- 确认已注入 ---"
+          grep -n "no-opt" Project.xml
+
       - name: Setup Haxe 4.1.5
         uses: krdlab/setup-haxe@v1
         with:

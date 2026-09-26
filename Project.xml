@@ -193,8 +193,14 @@
   <haxedef name="FEATURE_DISCORD" if="desktop" />
   <!-- Defines whether the file system can be read/written directly. Does not work in browser. -->
   <haxedef name="FEATURE_FILESYSTEM" if="desktop" />
-  <!-- Defines whether Lua Modcharts should be enabled. Only works on Windows. -->
-  <haxedef name="FEATURE_LUAMODCHART" if="windows" />
+  <!-- Defines whether Lua Modcharts should be enabled.
+       【KFE 改动】原版写的是 if="windows"，这里放宽成 if="desktop"。
+       原因：Windows 那条 CI 撞内存天花板（提交上限 18.87GB）一直过不去，
+       而 Linux 标准 runner 是免费的、且没有 Windows 那套提交上限硬限制。
+       但定义若留在 windows，Linux 下 ModchartState / KFECompat 这些
+       KFE 的核心代码**根本不参与编译**，编过了也等于没验证。
+       linc_luajit / hxvm-luajit 本来就是 if="desktop" 装的，依赖是齐的。 -->
+  <haxedef name="FEATURE_LUAMODCHART" if="desktop" />
   <!-- Defines whether WebM videos should be enabled. Currently only enabled on Windows. -->
   <haxedef name="FEATURE_WEBM" if="windows" />
   <!-- Defines whether StepMania files can be loaded. -->
