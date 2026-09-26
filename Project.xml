@@ -209,7 +209,11 @@
   <haxedef name="FEATURE_MULTITHREADING" if="cpp" />
 
   <!-- Defines whether the Mods menu will display before launching. -->
-  <haxedef name="FEATURE_MODCORE" if="desktop" />
+  <!-- 【KFE 改动】原版只 if="desktop"。现在开放到 android，因为 KFE 要能
+       在 Android 上打开 .kfemod / .kfepack / .kfeds 三种模组包（见 ModImporter.hx）。
+       ModImporter 用的是 haxe.zip + sys，在 Android cpp 上完全可用，
+       Polymod 也通过 sys 读应用私有存储里的 mods/ packs/，无需 FEATURE_FILESYSTEM。 -->
+  <haxedef name="FEATURE_MODCORE" if="desktop || android" />
 
   <!-- ===== KFE 新增：为云端 CI 的 OOM 兜底 ===== -->
   <!-- 第 4 次云端编译挂在：

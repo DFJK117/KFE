@@ -4,6 +4,7 @@ import polymod.backends.PolymodAssets.PolymodAssetType;
 import polymod.format.ParseRules.LinesParseFormat;
 import polymod.format.ParseRules.TextFileFormat;
 import polymod.Polymod;
+import sys.FileSystem;
 #end
 
 /**
@@ -25,6 +26,8 @@ class ModCore
 	{
 		#if FEATURE_MODCORE
 		Debug.logInfo("Initializing ModCore...");
+		// KFE: 启动前先把收件箱里的 .kfemod/.kfepack/.kfeds 自动导入。
+		ModImporter.scanAndImport();
 		loadModsById(getModIds());
 		#else
 		Debug.logInfo("ModCore not initialized; not supported on this platform.");
@@ -37,7 +40,9 @@ class ModCore
 		Debug.logInfo('Attempting to load ${ids.length} mods...');
 		var loadedModList = polymod.Polymod.init({
 			// Root directory for all mods.
-			modRoot: MOD_DIRECTORY,
+			// KFE: 这里指向同时包含 mods/ 与 packs/ 的父目录，
+			// 由 ModImporter.baseDir() 决定（桌面=.，Android=应用私有存储）。
+			modRoot: ModImporter.baseDir(),
 			// The directories for one or more mods to load.
 			dirs: ids,
 			// Framework being used to load assets. We're using a CUSTOM one which extends the OpenFL one.
@@ -92,11 +97,29 @@ class ModCore
 
 	static function getModIds():Array<String>
 	{
-		Debug.logInfo('Scanning the mods folder...');
-		var modMetadata = Polymod.scan(MOD_DIRECTORY);
-		Debug.logInfo('Found ${modMetadata.length} mods when scanning.');
-		var modIds = [for (i in modMetadata) i.id];
-		return modIds;
+		Debug.logInfo('Scanning for mods and packs...');
+
+		// KFE: 同时扫描 mods/ 与 packs/ 两个目录，
+		// 每个子目录就是一个模组 / 材质包，dirs 写成 "mods/<id>" / "packs/<id>" 的形式，
+		// 配合上面的 modRoot = baseDir() 拼出正确路径。
+		var ids:Array<String> = [];
+		var base = ModImporter.baseDir();
+		for (sub in ["mods", "packs"])
+		{
+			var dir = base + "/" + sub;
+			if (!FileSystem.exists(dir) || !FileSystem.isDirectory(dir))
+				continue;
+
+			for (name in FileSystem.readDirectory(dir))
+			{
+				var p = dir + "/" + name;
+				if (FileSystem.isDirectory(p))
+					ids.push(sub + "/" + name);
+			}
+		}
+
+		Debug.logInfo('Found ${ids.length} mod/pack folders.');
+		return ids;
 	}
 
 	static function buildParseRules():polymod.format.ParseRules

@@ -315,6 +315,19 @@ class Debug
 			Debug.logInfo('CONSOLE: Opening song $songName ($difficulty) in Chart Editor...');
 			FreeplayState.loadSongInFreePlay(songName, difficulty, true, true);
 		});
+
+		// KFE: 手动导入一个 .kfemod / .kfepack / .kfeds 包，方便调试。
+		// 用法： importkfe C:/path/to/your-mod.kfemod
+		#if FEATURE_MODCORE
+		addConsoleCommand("importkfe", function(path:String)
+		{
+			var r = ModImporter.importFile(path);
+			if (r.ok)
+				Debug.logInfo('CONSOLE: 导入成功 -> id=${r.id} type=${r.type} dests=${r.dests.join(", ")}');
+			else
+				Debug.logError('CONSOLE: 导入失败 -> ${r.error}');
+		});
+		#end
 	}
 
 	static function formatOutput(input:Dynamic, pos:haxe.PosInfos):Array<Dynamic>
