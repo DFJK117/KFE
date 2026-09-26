@@ -40,6 +40,12 @@ jobs:
       HXCPP_ARMV7: '1'
       # lime 7.9 这一代用的是比较老的 Android SDK/NDK/Gradle 组合，
       # 用太新的反而编不过，这里按它的年代挑版本。
+      # ★ 注意变量名：lime 检查的是 ANDROID_SDK（不是 ANDROID_SDK_ROOT！），
+      #   上次 5 秒失败的真凶就是它：
+      #     Error: You must define ANDROID_SDK and ANDROID_NDK_ROOT to target Android,
+      #            please run 'lime setup android' first
+      #   两个都设：lime 读 ANDROID_SDK，工作流脚本里继续用 $ANDROID_SDK_ROOT。
+      ANDROID_SDK: ${{ github.workspace }}/android-sdk
       ANDROID_SDK_ROOT: ${{ github.workspace }}/android-sdk
       ANDROID_NDK_ROOT: ${{ github.workspace }}/android-sdk/ndk/21.4.7075529
 
@@ -127,7 +133,14 @@ jobs:
       #   ANDROID_SDK_ROOT / ANDROID_NDK_ROOT 已经设好，这里只让 lime 把配置写进
       #   ~/.lime/config，不重新下载（NDK 我们已经手动装到指定路径了）。
       - name: 配置 lime android 工具链
-        run: haxelib run lime setup android
+        run: |
+          haxelib run lime setup android
+          # 双保险：把 SDK/NDK 路径直接写进 lime 全局配置（~/.lime），
+          # 即使 setup 交互没写进去，build 时也能从 config 读到。
+          haxelib run lime config ANDROID_SDK "$ANDROID_SDK"
+          haxelib run lime config ANDROID_NDK_ROOT "$ANDROID_NDK_ROOT"
+          echo "--- lime 全局配置 ---"
+          cat ~/.lime/config.xml 2>/dev/null || true
 
       # ★ 修 libwebm 在 Android NDK clang 下的编译错误
       #   上一条 Android 死在 rebuild extension-webm：
