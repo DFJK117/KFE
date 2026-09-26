@@ -97,10 +97,10 @@ jobs:
           ls "$ANDROID_SDK_ROOT"
           ls "$ANDROID_NDK_ROOT" | head -5
 
-      - name: Setup Haxe 4.1.5
+      - name: Setup Haxe 4.2.5（4.1.5 的 analyzer 内存失控：14.8GB 爆，官方 2GB 机器能编，换社区黄金组合 4.2.5+hxcpp 4.2.1）
         uses: krdlab/setup-haxe@v1
         with:
-          haxe-version: 4.1.5
+          haxe-version: 4.2.5
 
       - name: 机器规格（诊断用）
         run: |
