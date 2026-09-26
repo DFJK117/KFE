@@ -107,8 +107,16 @@ jobs:
           check polymod 1.4.3
           [ "$fail" = "0" ] || exit 1
 
-      # extension-webm 在 Windows 上要重编；Linux 上 FEATURE_WEBM 是
-      # if="windows" 的，根本不参与编译，所以这里直接跳过，省几分钟。
+      # ⚠️ 这里第一版写错了：我以为「FEATURE_WEBM 是 if="windows"，
+      #    Linux 用不到，可以直接跳过 rebuild」—— 结果 2 分钟就挂：
+      #      Error: Source path ".../extension-webm/git/ndll/Linux64/
+      #             extension-webm.ndll" does not exist
+      #   取证：Project.xml:122 的 `<haxelib name="extension-webm"/>` 是
+      #   **无条件**的，只有 Project.xml:205 的 FEATURE_WEBM 才是 if="windows"。
+      #   lime 复制 ndll 不看那个 define，所以 Linux 上一样得重编。
+      - name: 重编 extension-webm（Linux）
+        run: haxelib run lime rebuild extension-webm linux
+
       - name: 编译 linux -release
         run: |
           set -e

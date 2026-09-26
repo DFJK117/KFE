@@ -44,18 +44,21 @@ jobs:
           ref: '1.8'
           path: vanilla
 
-      # ★ 第一轮基线就是死在这：5 秒就挂，报的不是 OOM 而是
+      # ★ 前两轮基线都死在这：5 秒就挂，报的不是 OOM 而是
       #     actuate/1,8,7/motion/easing/Expo.hx:14-16 : ... Custom property
-      #   主 workflow（KFE）的 Project.xml 里有 --no-opt，不会报这个。
-      #   对照组的原则是「唯一变量 = 源码有没有补丁」，
-      #   所以编译选项也必须拉齐，否则测出来的是选项差异。
-      - name: 给原版也加 --no-opt（拉齐编译选项）
+      #   而主 workflow（KFE）的日志里**完全没有**这几行，说明差异在 Project.xml。
+      #
+      #   第一轮我以为是缺 --no-opt，用 sed 注入 —— 第二轮照样挂，sed 这招不可靠。
+      #   改成更彻底的做法：直接把 KFE 的 Project.xml 复制过来覆盖。
+      #   这样「编译选项」这一侧被完全拉齐，唯一变量就真的只剩源码
+      #   （vanilla 是原版 source，Project.xml 用 KFE 的）。
+      #   对照组的原则是：一次只能改一个变量。
+      - name: 用 KFE 的 Project.xml（拉齐编译选项）
         shell: bash
-        working-directory: vanilla
         run: |
-          sed -i 's|</project>|<haxeflag name="--no-opt" />\n</project>|' Project.xml
-          echo "--- 确认已注入 ---"
-          grep -n "no-opt" Project.xml
+          cp "${{ github.workspace }}/Project.xml" vanilla/Project.xml
+          echo "--- 确认 --no-opt 已在 ---"
+          grep -n "no-opt" vanilla/Project.xml
 
       - name: Setup Haxe 4.1.5
         uses: krdlab/setup-haxe@v1
