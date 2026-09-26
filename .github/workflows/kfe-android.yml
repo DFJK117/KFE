@@ -112,7 +112,7 @@ jobs:
           set -e
           mkdir -p "$HAXELIB_PATH"
           haxelib setup "$HAXELIB_PATH"
-          haxelib install hxcpp 4.3.220
+          haxelib install hxcpp 4.3.2
           haxelib install lime 7.9.0
           haxelib install openfl 9.1.0
           haxelib install flixel 4.9.0
