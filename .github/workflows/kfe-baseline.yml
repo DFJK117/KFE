@@ -22,9 +22,12 @@
 
 name: KFE 基线对照（原版 KE 1.8）
 
+# 【KFE 改动】不再跟着 push 自动跑：
+#   1) 它的结论早就有了——原版也编不完（run#12~#16 全失败），问题是环境内存，
+#      不是 KFE 补丁；
+#   2) 每轮 push 它都陪跑一次然后失败，给用户刷一封失败邮件。
+# 需要时在 Actions 页面手动 Run workflow。
 on:
-  push:
-    branches: [main, master, dev]
   workflow_dispatch:
 
 jobs:

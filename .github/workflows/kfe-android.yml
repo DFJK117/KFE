@@ -191,18 +191,35 @@ jobs:
           sudo chmod 600 /swapfile
           sudo mkswap /swapfile
           sudo swapon /swapfile
-          sudo systemctl stop systemd-oomd 2>/dev/null || true
-          sudo systemctl disable systemd-oomd 2>/dev/null || true
+          # ★ 彻底禁用 oomd：必须连 socket 一起停（它是 socket 激活的，
+          #   只 stop/disable service 会被 socket 重新拉起）+ mask 防复活。
+          #   上一轮就是漏了 socket，编译 13 分钟又被 oomd SIGTERM 全家杀。
+          sudo systemctl disable --now systemd-oomd.service systemd-oomd.socket 2>/dev/null || true
+          sudo systemctl mask systemd-oomd.service systemd-oomd.socket 2>/dev/null || true
+          sudo systemctl daemon-reload 2>/dev/null || true
+          echo "--- oomd 进程检查（应显示无）---"
+          ps aux | grep -i oomd | grep -v grep || echo "无 oomd 进程，OK"
           echo "--- swap 已启用 ---"
           swapon --show
           free -h
 
       - name: 编译 android -release
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           set -e
           (
             while true; do
               echo "$(date +%H:%M:%S) $(free -m | awk '/^Mem:/{print "used="$3"MB avail="$7"MB"}')" >> memlog.txt
+              # 【KFE 诊断】心跳上传：每 60 秒把 build.log 快照 commit+push 到 ci-diag。
+              # 编译进程无论被谁杀（oomd/OOM killer/runner 重启），死前 1 分钟内的
+              # 报错都一定已经在远端分支上——彻底封死日志黑洞。
+              if [ -f build.log ]; then
+                tail -n 500 build.log > build.diag.log 2>/dev/null || true
+                git add -f build.diag.log memlog.txt 2>/dev/null || true
+                git commit -m "ci-diag heartbeat $(date +%H:%M:%S)" >/dev/null 2>&1 || true
+                git push -f "https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git" HEAD:ci-diag >/dev/null 2>&1 || true
+              fi
               sleep 60
             done
           ) &
