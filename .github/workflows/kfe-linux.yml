@@ -39,12 +39,19 @@ jobs:
       - name: 装系统依赖
         run: |
           sudo apt-get update
+          # gcc-multilib / g++-multilib 是为 32 位编译准备的：
+          # 第二轮挂在
+          #   /usr/include/stdint.h:26:10: fatal error:
+          #   bits/libc-header-start.h: No such file or directory
+          # 这是 lime rebuild extension-webm linux 会去编 32 位目标，
+          # 而没有 32 位的 C 头文件。
           sudo apt-get install -y \
             libgl1-mesa-dev libglu1-mesa-dev \
             libx11-dev libxext-dev libxcursor-dev libxrandr-dev \
             libxi-dev libxinerama-dev \
             libasound2-dev libpulse-dev \
-            libudev-dev
+            libudev-dev \
+            gcc-multilib g++-multilib
 
       - name: Setup Haxe 4.1.5
         uses: krdlab/setup-haxe@v1

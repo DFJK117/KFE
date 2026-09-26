@@ -37,6 +37,14 @@ jobs:
       HXCPP_COMPILE_THREADS: '2'
 
     steps:
+      # ⚠️ 第三轮基线死在这：
+      #     cp: cannot stat 'D:\a\KFE\KFE/Project.xml': No such file or directory
+      #   原因：这个 workflow 只 checkout 了原版（到 vanilla 子目录），
+      #   工作区根是空的，本仓库的 Project.xml 根本不存在。
+      #   所以必须先 checkout 本仓库一次（默认落在工作区根）。
+      - name: Checkout 本仓库（取 KFE 的 Project.xml）
+        uses: actions/checkout@v4
+
       - name: 取原版 Kade Engine 1.8 源码
         uses: actions/checkout@v4
         with:
