@@ -10,9 +10,10 @@
 
 name: KFE 基线对照（原版 KE 1.8 · Android）
 
+# 【2026-09-26 判决完毕】基线只跑了 9 秒：原版 KE 1.8 的 Project.xml/依赖在
+# Android 目标下直接报错（exit 1，正常退出）——原版从未适配过 Android 编译
+# （官方 AppVeyor 只编 Windows）。对照实验结束，改回手动触发。
 on:
-  push:
-    branches: [main, master, dev]
   workflow_dispatch:
 
 jobs:

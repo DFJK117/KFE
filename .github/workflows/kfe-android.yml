@@ -97,10 +97,10 @@ jobs:
           ls "$ANDROID_SDK_ROOT"
           ls "$ANDROID_NDK_ROOT" | head -5
 
-      - name: Setup Haxe 4.2.5（4.1.5 的 analyzer 内存失控：14.8GB 爆，官方 2GB 机器能编，换社区黄金组合 4.2.5+hxcpp 4.2.1）
+      - name: Setup Haxe 4.3.6（4.1.5/4.2.5 均 15GB 爆内存；4.3 编译器做过内存重构，是下一个验证对象）
         uses: krdlab/setup-haxe@v1
         with:
-          haxe-version: 4.2.5
+          haxe-version: 4.3.6
 
       - name: 机器规格（诊断用）
         run: |
@@ -112,7 +112,7 @@ jobs:
           set -e
           mkdir -p "$HAXELIB_PATH"
           haxelib setup "$HAXELIB_PATH"
-          haxelib install hxcpp 4.2.1
+          haxelib install hxcpp 4.3.220
           haxelib install lime 7.9.0
           haxelib install openfl 9.1.0
           haxelib install flixel 4.9.0
@@ -240,9 +240,8 @@ jobs:
           MEMPID=$!
 
           set +e
-          # 【KFE 诊断】把构建输出抓到 build.log，失败时能发到公开 Issue 让我这边读到
-          # （GitHub 日志接口在我这边要管理员权限，Issue 对公开仓库可匿名读，绕过 403）。
-          haxelib run lime build android -release > build.log 2>&1
+          # -verbose：把 haxe 各阶段进度打进 build.log，心跳快照能定位爆内存时编译走到哪
+          haxelib run lime build android -release -verbose > build.log 2>&1
           RC=$?
           kill $MEMPID 2>/dev/null || true
 
