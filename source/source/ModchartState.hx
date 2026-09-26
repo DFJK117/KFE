@@ -30,70 +30,6 @@ class ModchartState
 	// public static var shaders:Array<LuaShader> = null;
 	public static var lua:State = null;
 
-	// ===== KFE: 音效句柄表（stopSound 需要它）=====
-	public static var kfeSounds:Map<String, FlxSound> = [];
-
-	// ===== KFE: 往 unspawnNotes 注入警告音符 =====
-	// 等价实现原 Bob's Onslaught 的 PlayState.hx:1801-1850。
-	// 原版用 new Note(t, data, null, false, _warning, _mustHitNotes)；
-	// KE 1.8 的 Note 没这两个参数，所以 KFE 在 Note.hx 上加了 kfeWarning/kfeFake 字段。
-	public function kfePushWarnNote(strumTime:Float, noteData:Int, isWarning:Bool):Void
-	{
-		if (PlayState.instance == null)
-			return;
-
-		var n:Note = new Note(strumTime, noteData, null, false);
-		n.kfeWarning = isWarning;
-		n.kfeFake = !isWarning;
-		n.scrollFactor.set(0, 0);
-		n.mustPress = true;
-		n.x += FlxG.width / 2;
-		n.setKfeWarningGraphic();
-
-		PlayState.instance.unspawnNotes.push(n);
-		// generateSong 里已经排过一次序，追加之后必须重排，
-		// 否则 PlayState 按 unspawnNotes[0] 推进时会漏掉后面的音符。
-		PlayState.instance.unspawnNotes.sort(function(a:Note, b:Note):Int
-		{
-			if (a.strumTime < b.strumTime) return -1;
-			if (a.strumTime > b.strumTime) return 1;
-			return 0;
-		});
-	}
-
-	// ===== KFE: 走 Paths.image() 的精灵加载（原版 makeSprite 只认 song 目录）=====
-	// 原版: BitmapData.fromFile(cwd + "assets/data/songs/" + songId + "/" + path + ".png")
-	//   → 模组图集在 assets/shared/images/ 下，原版根本找不到。
-	public function kfeMakeSpriteEx(spritePath:String, toBeCalled:String, drawBehind:Bool = false):Void
-	{
-		if (PlayState.instance == null)
-			return;
-
-		var sprite:FlxSprite = new FlxSprite(0, 0);
-		sprite.loadGraphic(Paths.image(spritePath));
-		sprite.updateHitbox();
-		luaSprites.set(toBeCalled, sprite);
-
-		@:privateAccess
-		{
-			if (drawBehind)
-			{
-				PlayState.instance.removeObject(PlayState.gf);
-				PlayState.instance.removeObject(PlayState.boyfriend);
-				PlayState.instance.removeObject(PlayState.dad);
-			}
-			PlayState.instance.addObject(sprite);
-			if (drawBehind)
-			{
-				PlayState.instance.addObject(PlayState.gf);
-				PlayState.instance.addObject(PlayState.boyfriend);
-				PlayState.instance.addObject(PlayState.dad);
-			}
-		}
-
-		new LuaSprite(sprite, toBeCalled).Register(lua);
-	}
-
 	function callLua(func_name:String, args:Array<Dynamic>, ?type:String):Dynamic
 	{
 		var result:Any = null;
@@ -278,10 +214,7 @@ class ModchartState
 	{
 		// trace('setting variable ' + var_name + ' to ' + object);
 
-		// ===== KFE: 类型感知推送 =====
-		// 原版这里固定 Lua.pushnumber，导致 Bool 变数字（0 在 Lua 里是真值）、
-		// 字符串直接类型不符。改用本文件已有的 toLua()。
-		toLua(lua, object);
+		Lua.pushnumber(lua, object);
 		Lua.setglobal(lua, var_name);
 	}
 
@@ -488,25 +421,15 @@ class ModchartState
 				songLowercase = 'milf';
 		}
 
-		// ===== KFE: 多方言 modchart 路径候选 =====
-		// KE1.8 原生 / LE(chartName.toLowerCase()) / 老式 <song>/modchart / SM 目录
-		// 依据: docs/01_版本矩阵.md；实现: KFECompat.modchartCandidates()
-		var path:String = KFECompat.findModchartPath();
-		if (path == null)
-		{
-			trace('[KFE] 未找到 modchart，按原版 KE 运行');
-			lua = null;
-			return;
-		}
-		trace('[KFE] 加载 modchart: ' + path);
+		var path = Paths.lua('songs/${PlayState.SONG.songId}/modchart');
+		if (PlayState.isSM)
+			path = PlayState.pathToSm + "/modchart.lua";
 
-		var result = LuaL.dofile(lua, path);
+		var result = LuaL.dofile(lua, path); // execute le file
 
 		if (result != 0)
 		{
-			var kfeErr:String = Lua.tostring(lua, result);
-			trace('[KFE] Lua 错误: ' + kfeErr);
-			Application.current.window.alert("LUA COMPILE ERROR:\n" + kfeErr, "Kade Engine Modcharts");
+			Application.current.window.alert("LUA COMPILE ERROR:\n" + Lua.tostring(lua, result), "Kade Engine Modcharts");
 			FlxG.switchState(new FreeplayState());
 			return;
 		}
@@ -551,62 +474,7 @@ class ModchartState
 
 		setVar("strumLineY", PlayState.instance.strumLine.y);
 
-		// ===== KFE: 补注入两个脚本必需的全局 =====
-		// 原版 KE 1.8 没给 Lua，导致 modchart 无法按舞台/模式分支
-		setVar("curStage", Stage.curStage);
-		setVar("storyMode", isStoryMode);
-
 		// callbacks
-
-		// ===== KFE 新增回调 =====
-		// 原版 KE 1.8 的 Lua 完全无法播声音、无法相机淡入淡出、
-		// 也无法把自定义音符塞进 unspawnNotes —— 这三件事 bobcompat 都要用。
-
-		Lua_helper.add_callback(lua, "playSound", function(name:String, ?volume:Float = 1)
-		{
-			var s:FlxSound = FlxG.sound.play(Paths.sound(name), volume);
-			kfeSounds.set(name, s);
-		});
-
-		Lua_helper.add_callback(lua, "stopSound", function(name:String)
-		{
-			if (kfeSounds.exists(name))
-			{
-				kfeSounds.get(name).stop();
-				kfeSounds.remove(name);
-			}
-		});
-
-		Lua_helper.add_callback(lua, "playMusic", function(name:String, ?volume:Float = 1, ?loop:Bool = false)
-		{
-			FlxG.sound.playMusic(Paths.music(name), volume, loop);
-		});
-
-		Lua_helper.add_callback(lua, "cameraFade", function(color:String, duration:Float, fadeIn:Bool)
-		{
-			var hex:String = StringTools.replace(color, "#", "");
-			var col:Int = 0xFF000000;
-			var parsed:Null<Int> = Std.parseInt("0x" + hex);
-			if (parsed != null) col = 0xFF000000 | parsed;
-			FlxG.camera.fade(col, duration, fadeIn, null, true);
-		});
-
-		Lua_helper.add_callback(lua, "pushWarnNote", function(strumTime:Float, noteData:Int, isWarning:Bool)
-		{
-			kfePushWarnNote(strumTime, noteData, isWarning);
-		});
-
-		// 原版 makeSprite 只从 assets/data/songs/<songId>/ 找图（ModchartState.hx:339），
-		// 但模组的图在 assets/shared/images/ 下，所以必须另给一个走 Paths.image() 的版本。
-		Lua_helper.add_callback(lua, "makeSpriteEx", function(spritePath:String, toBeCalled:String, ?drawBehind:Bool = false)
-		{
-			kfeMakeSpriteEx(spritePath, toBeCalled, drawBehind);
-		});
-
-		Lua_helper.add_callback(lua, "getOption", function(name:String)
-		{
-			return KFECompat.getSaveOption(name);
-		});
 
 		Lua_helper.add_callback(lua, "makeSprite", makeLuaSprite);
 
@@ -662,11 +530,7 @@ class ModchartState
 		for (i in 0...PlayState.strumLineNotes.length)
 		{
 			var member = PlayState.strumLineNotes.members[i];
-			// ===== KFE: 判定线双方言命名 =====
-			// KE 叫什么都能对上: receptor_0..7  ←→  leftDadNote/leftPlrNote...
-			// 依据: LE/PlayState.hx:464/468 的注册点
-			KFECompat.registerAliased(new LuaReceptor(member, "receptor_" + i), lua,
-				KFECompat.receptorAliases(i));
+			new LuaReceptor(member, "receptor_" + i).Register(lua);
 		}
 
 		new LuaGame().Register(lua);
@@ -674,27 +538,9 @@ class ModchartState
 		new LuaWindow().Register(lua);
 	}
 
-	// ===== KFE: 一次引擎事件扇出到所有方言的 hook 名 =====
-	// 安全前提: callLua 对缺失的全局会拿到 "attempt to call a nil value"
-	// 并被静默吞掉，所以多调几个不存在的名字零成本。
-	// 但 callLua 每次会在栈上留 1 个值不弹，这里必须补上，
-	// 否则一整首歌累积下来会撞 Lua 栈上限。
-	// 例: start↔create、playerTwoSing↔dadNoteHit、playerOneMiss↔doMiss
 	public function executeState(name, args:Array<Dynamic>)
 	{
-		if (lua == null)
-			return null;
-
-		var kfeTop:Int = Lua.gettop(lua);
-		var kfeRet:Dynamic = null;
-		for (h in KFECompat.hookAliases(name))
-		{
-			kfeRet = Lua.tostring(lua, callLua(h, args));
-			var kfeNow:Int = Lua.gettop(lua);
-			if (kfeNow > kfeTop)
-				Lua.pop(lua, kfeNow - kfeTop);
-		}
-		return kfeRet;
+		return Lua.tostring(lua, callLua(name, args));
 	}
 
 	public static function createModchartState(?isStoryMode = true):ModchartState
