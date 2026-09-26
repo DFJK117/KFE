@@ -3,186 +3,197 @@
 [![KFE Build (Windows)](https://github.com/DFJK117/KFE/actions/workflows/kfe-build.yml/badge.svg)](https://github.com/DFJK117/KFE/actions/workflows/kfe-build.yml)
 [![KFE Build (Linux)](https://github.com/DFJK117/KFE/actions/workflows/kfe-linux.yml/badge.svg)](https://github.com/DFJK117/KFE/actions/workflows/kfe-linux.yml)
 
-> **一套引擎，跑多代模组的 modchart。**
+> **One engine that runs modcharts from every generation.**
 >
-> 以 Kade Engine 1.8 为底座，加了一层「方言兼容层」——
-> 让 KE 原生、LE (Andromeda) 风格的对象式脚本，以及更老一代模组的资源，
-> 都能在同一套引擎里加载运行，不用为了一个模组换一个引擎版本。
+> Built on Kade Engine 1.8 with a compatibility layer on top, so that
+> KE-native scripts, LE (Andromeda) style object scripts, and older mods'
+> assets all load and run in the same build — instead of switching engine
+> versions every time you switch mods.
+
+[简体中文文档 / Chinese version](KFE.zh-CN.md)
 
 ---
 
-## 为什么会有这个东西
+## Why does this exist
 
-FNF 的 modchart 生态**没有统一标准**。不同引擎分支各自演化出一套脚本写法：
+The FNF modchart ecosystem never had a standard. Each engine branch grew its own dialect:
 
-- 同一个对象，在不同分支里叫不同的名字
-- 同一个事件，hook 函数名不一样（`start` vs `create`）
-- modchart 文件放在不同路径下
-- 甚至同一个开关的存档语义是**反的**
+- The same object is called by different names in different branches
+- The same event has different hook names (`start` vs `create`)
+- modchart files live at different paths
+- Some save-data toggles are even stored **inverted**
 
-结果就是：一个模组只能在它当初针对的那个引擎版本上跑，换个版本就直接报错或者静默失效。
+So a mod only runs on the exact engine version it was written for. Move it
+one version over and it either errors out or silently does nothing.
 
-KFE 的做法是**不去改模组，而是让引擎同时认得下所有写法**——
-同名对象挂多个别名、事件扇出到所有方言的 hook 名、路径按候选表探测。
-改的是引擎侧，模组那一侧不用动。
-
----
-
-## 目录
-
-- [特性一览](#特性一览)
-- [补丁全表](#补丁全表)
-- [平台与编译](#平台与编译)
-- [画质选项](#画质选项)
-- [底座校验](#底座校验)
-- [未落地 / 不可兼容](#未落地--不可兼容)
-- [排错记录](#排错记录)
-- [关于](#关于)
+KFE takes the opposite approach: **don't rewrite the mods — teach the engine
+every dialect.** Objects get registered under multiple names, events fan out
+to all known hook names, and paths are probed from a candidate list.
+The mod side stays untouched.
 
 ---
 
-## 特性一览
+## Contents
 
-### 一、modchart 多方言加载
+- [Features](#features)
+- [Patch list](#patch-list)
+- [Platforms and builds](#platforms-and-builds)
+- [Graphics options](#graphics-options)
+- [Base verification](#base-verification)
+- [Not done / incompatible](#not-done--incompatible)
+- [Troubleshooting](#troubleshooting)
+- [About](#about)
 
-| 特性 | 说明 |
+---
+
+## Features
+
+### 1. Multi-dialect modchart loading
+
+| Feature | Description |
 |---|---|
-| 路径候选探测 | 加载路径从单一硬编码改为**多方言候选**（KE 原生 / LE 风格 / 老式 `<song>/modchart` / SM 目录…） |
-| 找不到就安静退回 | 原版找不到 modchart 会弹错误窗口并踢回自由模式；KFE 改成只记日志、按原版行为继续跑 |
-| 判定与加载同源 | 存在性判定和实际加载走同一张候选表，不会出现「判定说有、加载说没有」 |
+| Path candidate probing | Loading path changed from one hardcoded path to a **candidate list** (KE native / LE style / legacy `<song>/modchart` / StepMania dirs …) |
+| Quiet fallback | Vanilla pops an error window and kicks you back to Freeplay when the modchart is missing; KFE just logs it and keeps running normally |
+| One source of truth | Existence check and actual loading share the same candidate table — no more "check says yes, loader says no" |
 
-### 二、事件名多方言扇出
+### 2. Event fan-out across dialects
 
-一次 `executeState` 会扇出到所有方言的事件名。例如：
+A single `executeState` fans out to every dialect's event name:
 
-| KE 1.8 写法 | LE 风格写法 | 含义 |
+| KE 1.8 name | LE style name | Meaning |
 |---|---|---|
-| `start` | `create` | 谱面开始 |
-| `playerTwoSing` | `dadNoteHit` | 对手唱歌 |
-| `playerOneMiss` | `doMiss` | 玩家漏接 |
-| … | … | 共 12 组映射 |
+| `start` | `create` | song starts |
+| `playerTwoSing` | `dadNoteHit` | opponent sings |
+| `playerOneMiss` | `doMiss` | player misses |
+| … | … | 12 mappings total |
 
-- **零成本**：调用不存在的全局会得到 `attempt to call a nil value` 并被静默吞掉，所以多调几个名字没有副作用
-- **修了栈泄漏**：调用会在 Lua 栈上留值不弹，一整首歌累积下来会撞栈上限，KFE 补上了弹栈
+- **Zero cost**: calling a global that doesn't exist yields
+  `attempt to call a nil value` and gets swallowed silently, so extra names cost nothing
+- **Fixed a stack leak**: each call left a value on the Lua stack, which adds
+  up over a full song and eventually hits the stack limit — KFE pops it properly
 
-### 三、对象双方言命名
+### 3. Dual naming for objects
 
-同一个对象同时注册两个名字，脚本用哪个都能取到：
+Every object registers under both names, so either spelling works:
 
-| 对象 | KE 名 | LE 名 |
+| Object | KE name | LE name |
 |---|---|---|
-| 判定线 | `receptor_0..7` | `leftDadNote` / `leftPlrNote` … |
-| 相机 | `camGame` / `camHUD` / `camSustains` / `camNotes` | `gameCam` / `HUDCam` / `holdCam` / `receptorCam` |
-| 角色 | `boyfriend` / `gf` / `dad` | `bf` / `gf` / `dad` |
+| Receptors | `receptor_0..7` | `leftDadNote` / `leftPlrNote` … |
+| Cameras | `camGame` / `camHUD` / `camSustains` / `camNotes` | `gameCam` / `HUDCam` / `holdCam` / `receptorCam` |
+| Characters | `boyfriend` / `gf` / `dad` | `bf` / `gf` / `dad` |
 
-顺带**修正了原版的一处笔误**：KE 1.8 把 `camNotes` 也绑到了 `camSustains` 上，
-KFE 改回绑定真正的 `camNotes` 对象。
+Also **fixed a vanilla typo**: KE 1.8 bound `camNotes` to `camSustains` as well.
+KFE binds it to the real `camNotes` object.
 
-### 四、补注入脚本全局
+### 4. Extra globals injected for scripts
 
-原版 KE 1.8 没给脚本这两个变量，导致 modchart 无法按舞台或模式分支：
+Vanilla KE 1.8 never exposed these, so modcharts couldn't branch on stage or mode:
 
-- `curStage`（当前舞台）
-- `storyMode`（是否故事模式）
+- `curStage` (current stage)
+- `storyMode` (story mode or not)
 
-### 五、`setVar` 类型感知
+### 5. Type-aware `setVar`
 
-原版 `setVar` 固定把值转成数字推给 Lua，带来两个坑：
+Vanilla `setVar` always pushed numbers, which caused two bugs:
 
-- 布尔被推成数字 —— 而 **Lua 里 `0` 是真值**，判断语义直接反了
-- 字符串类型不符
+- Booleans became numbers — and in **Lua `0` is truthy**, so the logic inverted
+- Strings ended up with the wrong type
 
-KFE 改成按实际类型分发。
+KFE dispatches on the actual type instead.
 
-### 六、新增脚本回调
+### 6. New script callbacks
 
-新增 7 个脚本可用回调：
+Seven new callbacks available to scripts:
 
 `playSound` / `stopSound` / `playMusic` / `cameraFade` / `pushWarnNote` / `getOption` / `makeSpriteEx`
 
-其中 `makeSpriteEx` 走常规资源路径加载，解决原版 `makeSprite` 只在歌曲目录里找图的问题。
+`makeSpriteEx` loads through the normal asset path, working around vanilla
+`makeSprite` only looking inside the song folder.
 
-### 七、存档开关语义
+### 7. Save-option semantics
 
-`getOption()` 返回**原始存档值**（布尔就返回布尔），不做任何取反。
+`getOption()` returns the **raw save value** (a bool stays a bool) — no inversion.
 
-> 这里有个坑值得记：部分模组的存档开关是**反语义**存的
-> （存的值和界面显示相反）。所以脚本里写 `!save.data.X` 时，
-> 直译成 `not getOption("X")` 就对了，**不要自作聪明去"纠正"**。
+> Worth noting: some mods store their toggles **inverted**
+> (stored value is the opposite of what the menu shows).
+> So when a script says `!save.data.X`, translating it straight to
+> `not getOption("X")` is correct — **don't try to be clever and "fix" it**.
 
-### 八、警告音符系统
+### 8. Warning-note system
 
-- `Note` 新增 `kfeWarning` / `kfeFake` 字段与对应的图形切换
-- 可向未生成音符队列注入警告音符，**注入后会重排序**
-  （原流程已经排过一次序，不重排的话按队首推进会漏掉后面的音符）
-- 命中回调可替换原版硬编码的扣血逻辑
-- 音符队列放开为公开，供兼容层注入
+- `Note` gains warning / fake fields plus the graphic switch to match
+- Warning notes can be injected into the pending-notes queue, and the queue
+  is **re-sorted afterwards** (it was already sorted once upstream; without
+  re-sorting, stepping from the head of the queue skips later notes)
+- The hit callback can replace vanilla's hardcoded health-drain logic
+- The notes queue is exposed publicly so the compatibility layer can inject
 
-### 九、画质选项
+### 9. Graphics options
 
-见 [画质选项](#画质选项)。
+See [Graphics options](#graphics-options).
 
-### 十、兼容层 API（`KFECompat.hx`）
+### 10. Compatibility layer API (`KFECompat.hx`)
 
-| API | 作用 |
+| API | Purpose |
 |---|---|
-| `modchartCandidates()` | modchart 路径候选表 |
-| `findModchartPath()` | 按候选表探测实际存在的路径 |
-| `hasModchart()` | 存在性判定（与加载表同源） |
-| `hookAliases(name)` | 事件名的多方言映射 |
-| `receptorAliases(i)` / `cameraAliases(ke, le)` / `characterAliases(name)` | 双方言名字表 |
-| `registerAliased(obj, lua, names)` | 把同一个对象按多个名字注册进脚本 |
-| `getSaveOption(name)` | 读存档开关（返回原始值） |
+| `modchartCandidates()` | modchart path candidate table |
+| `findModchartPath()` | probe the candidate table for a real path |
+| `hasModchart()` | existence check (same source as the loader) |
+| `hookAliases(name)` | event-name mapping across dialects |
+| `receptorAliases(i)` / `cameraAliases(ke, le)` / `characterAliases(name)` | dual-name tables |
+| `registerAliased(obj, lua, names)` | register one object under several names |
+| `getSaveOption(name)` | read a save toggle (raw value) |
 
 ---
 
-## 补丁全表
+## Patch list
 
-共 **16 个补丁**，改动 4 个原版文件 + 新增 3 个文件，附带 36 条自动化断言。
+**16 patches** across 4 vanilla files, plus 3 new files, with 36 automated assertions.
 
-| 补丁 | 文件 | 内容 |
+| Patch | File | What it does |
 |---|---|---|
-| `MS-1` | `ModchartState.hx` | 加载路径改多方言候选，找不到时安静退回原版 |
-| `MS-2` | `ModchartState.hx` | 注入 `curStage` / `storyMode` |
-| `MS-3` | `ModchartState.hx` | 新增 6 个回调 |
-| `MS-4` | `ModchartState.hx` | 判定线双方言命名 |
-| `MS-5` / `MS-5b` | `ModchartState.hx` | `executeState` 改事件名扇出 + 修栈泄漏 |
-| `MS-6` | `ModchartState.hx` | 音效句柄表 + 警告音符注入（含重排序）+ `makeSpriteEx` |
-| `MS-7` | `ModchartState.hx` | `setVar` 改类型感知 |
-| `PS-1` | `PlayState.hx` | `executeModchart` 改多候选判定 |
-| `PS-2` | `PlayState.hx` | 相机 / 角色双方言命名，并修正 `camNotes` 绑定 |
-| `PS-3` | `PlayState.hx` | 警告音符命中回调 |
-| `PS-4` | `PlayState.hx` | 音符队列放开为公开 |
-| `PS-5` | `PlayState.hx` | 向画质层登记主相机，让动态模糊生效 |
-| `NT-1` | `Note.hx` | 警告 / 假音符字段与图形切换 |
-| `OM-1` | `OptionsMenu.hx` | Appearance 分组新增「动态模糊」与「渲染后端」两项 |
-| — | `Project.xml` | 加 `--no-opt`（降低编译期内存峰值）；Lua modchart 支持放宽到桌面端 |
+| `MS-1` | `ModchartState.hx` | multi-dialect load path, quiet fallback when not found |
+| `MS-2` | `ModchartState.hx` | inject `curStage` / `storyMode` |
+| `MS-3` | `ModchartState.hx` | 6 new callbacks |
+| `MS-4` | `ModchartState.hx` | dual naming for receptors |
+| `MS-5` / `MS-5b` | `ModchartState.hx` | `executeState` fan-out + stack-leak fix |
+| `MS-6` | `ModchartState.hx` | sound-handle table + warning-note injection (with re-sort) + `makeSpriteEx` |
+| `MS-7` | `ModchartState.hx` | type-aware `setVar` |
+| `PS-1` | `PlayState.hx` | multi-candidate `executeModchart` check |
+| `PS-2` | `PlayState.hx` | camera / character dual naming, fix `camNotes` binding |
+| `PS-3` | `PlayState.hx` | warning-note hit callback |
+| `PS-4` | `PlayState.hx` | notes queue made public |
+| `PS-5` | `PlayState.hx` | register main camera with the graphics layer (enables motion blur) |
+| `NT-1` | `Note.hx` | warning / fake note fields and graphic switch |
+| `OM-1` | `OptionsMenu.hx` | Appearance group gains "Motion Blur" and "Renderer" |
+| — | `Project.xml` | `--no-opt` (lowers compile-time memory peak); Lua modchart support widened to desktop |
 
-### 新增文件（3 个）
+### New files (3)
 
-| 文件 | 作用 |
+| File | Purpose |
 |---|---|
-| `source/KFECompat.hx` | 方言兼容层（上表全部 API） |
-| `source/KFEGraphics.hx` | 画质状态机与两个选项控件 |
-| `source/KFEBlurShader.hx` | 动态模糊着色器 |
+| `source/KFECompat.hx` | dialect compatibility layer (all APIs above) |
+| `source/KFEGraphics.hx` | graphics state machine and two option controls |
+| `source/KFEBlurShader.hx` | motion-blur shader |
 
-> 刻意**不碰 `Lua_helper`**：它的模块路径无法从工程内确定，
-> 所有新增能力都走已经确定可用的回调注册入口。
+> `Lua_helper` is deliberately **left untouched**: its module path can't be
+> resolved from inside the project, so every new capability goes through the
+> callback-registration entry point that is known to work.
 
 ---
 
-## 平台与编译
+## Platforms and builds
 
-不用在本地装 Haxe 那一整套（haxe / haxelib / lime / hxcpp / MSVC）。
-`.github/workflows/` 下的流水线会在 push 后自动跑：
+You don't need a local Haxe toolchain (haxe / haxelib / lime / hxcpp / MSVC).
+The workflows under `.github/workflows/` run automatically on push:
 
-| Workflow | 平台 | 产出 |
+| Workflow | Platform | Artifact |
 |---|---|---|
-| `kfe-build.yml` | Windows | artifact `KFE-windows` |
-| `kfe-linux.yml` | Linux | artifact `KFE-linux` |
-| `kfe-baseline.yml` | Windows | 对照用：编**不打补丁**的原版引擎 |
+| `kfe-build.yml` | Windows | `KFE-windows` |
+| `kfe-linux.yml` | Linux | `KFE-linux` |
+| `kfe-baseline.yml` | Windows | control group: builds the **unpatched** vanilla engine |
 
-锁定的依赖版本（每个都在 lib.haxe.org 上核实过存在）：
+Pinned dependency versions (each verified to exist on lib.haxe.org):
 
 ```
 hxcpp 4.2.1   lime 7.9.0   openfl 9.1.0   flixel 4.9.0
@@ -191,98 +202,113 @@ polymod 1.4.3
 git: discord_rpc / extension-webm / linc_luajit / hxvm-luajit
 ```
 
-装完依赖后会**回读校验**实际生效版本，对不上就立刻停——
-因为 haxelib 的当前版本很容易被后面某条命令悄悄顶掉。
+After installing, the pipeline **reads back the effective versions** and stops
+immediately if they don't match — because haxelib's current version can get
+silently bumped by a later command.
 
-底层（Lime 7.9 / OpenFL 9.1）支持 Windows / Linux / macOS / HTML5 / 移动端 / Switch，
-但**目前只有 Windows 与 Linux 这两条流水线是真的在跑的**，其余平台未验证。
+The base (Lime 7.9 / OpenFL 9.1) supports Windows / Linux / macOS / HTML5 /
+mobile / Switch, but **only the Windows and Linux pipelines are actually
+exercised**; the rest are unverified.
 
 ---
 
-## 画质选项
+## Graphics options
 
-Appearance 分组里新增两项：
+Two new entries in the Appearance group:
 
-| 选项 | 档位 | 生效方式 |
+| Option | Levels | Applies |
 |---|---|---|
-| `Motion Blur` | off / low / medium / high | 即时（纯 shader） |
-| `Renderer` | Auto / OpenGL / Direct3D 11 (via ANGLE) / Software | 需重启，按一下即重启 |
+| `Motion Blur` | off / low / medium / high | immediately (shader only) |
+| `Renderer` | Auto / OpenGL / Direct3D 11 (via ANGLE) / Software | needs restart — press to restart now |
 
-**关于「DX11」要说清楚：**
+**About "DX11", to be clear:**
 
-> Lime 7.9.0 的渲染上下文枚举里**没有 `d3d11`**，
-> 全部取值只有 `cairo / canvas / dom / flash / opengl / opengles / webgl / custom`。
-> 传 `d3d11` 会被直接丢掉——那种「DX11 开关」是假的。
+> Lime 7.9.0's render-context enum has **no `d3d11`**. The full set is
+> `cairo / canvas / dom / flash / opengl / opengles / webgl / custom`.
+> Passing `d3d11` is silently dropped — that kind of "DX11 toggle" is fake.
 >
-> Windows 上真正走 D3D 的路径是 **ANGLE**：GLES 调用经 EGL → ANGLE → 转译成 D3D11。
-> 所以本引擎里的「DX11」档实际传的是 `opengles`，
-> 界面上也老老实实标成 `Direct3D 11 (via ANGLE)`，不装成原生 DX11。
+> The real D3D path on Windows is **ANGLE**: GLES calls go
+> EGL → ANGLE → translated to D3D11.
+> So this engine's "DX11" level actually passes `opengles`, and the UI
+> honestly labels it `Direct3D 11 (via ANGLE)` rather than pretending
+> it's native DX11.
 
-**动态模糊是单帧径向多 tap 的近似**，不是物理正确的运动模糊
-（真运动模糊需要帧历史或速度缓冲，这条管线拿不到）。所以叫「近似」，不叫「运动模糊」。
+**Motion blur here is a single-frame radial multi-tap approximation**, not
+physically correct motion blur (real motion blur needs frame history or a
+velocity buffer, which this pipeline doesn't have). Hence "approximation".
 
-| 档位 | 强度 | 采样数 |
+| Level | Strength | Samples |
 |---|---|---|
 | off | 0.000 | 2 |
 | low | 0.020 | 6 |
 | medium | 0.045 | 12 |
 | high | 0.080 | 20 |
 
-画质层还会回收已销毁的相机，并用替换语义保证重复设置不出问题。
+The graphics layer also garbage-collects destroyed cameras and uses replace
+semantics so repeated application is idempotent.
 
-完整取证见 `docs/06_画质选项.md`。
-
----
-
-## 底座校验
-
-重新生成分发时会**逐字节断言**锚点文件的校验和，不一致就拒绝继续——
-防止底座版本串味。
-
-> 踩过一次坑：某个号称「1.8 Template」的仓库其实被改过
-> （精灵注册被注释掉、Lua modchart 的条件守卫被拆了）。
-> 所以这一步是硬性的，不是可选项。
+Full evidence trail in `docs/06_画质选项.md`.
 
 ---
 
-## 未落地 / 不可兼容
+## Base verification
 
-**未落地**（后续阶段）：
+Regenerating the distribution **byte-asserts** the checksums of anchor files
+and refuses to continue on mismatch — so the base can't silently drift.
 
-- **LE 对象成员补齐**：LE 的脚本精灵对象有 32 个成员，KE 1.8 只有 9 个
-  （缺 `visible` / `scaleX` / `scaleY` / `scrollFactorX` / `makeGraphic` 等）
-- **KE 1.5.x ~ 1.6.2 平铺式 API 桥**：那几代是近百个平铺全局函数，范式完全不同
-- `countdown` 触发点
-
-**不可兼容**：
-
-- `doEvent` —— KE 1.8 没有谱面事件系统，没有对应的宿主机制
+> Learned this the hard way: a repo calling itself "1.8 Template" had actually
+> been modified (sprite registration commented out, the Lua modchart guard
+> removed). That's why this check is mandatory, not optional.
 
 ---
 
-## 排错记录
+## Not done / incompatible
 
-编译过程中踩过的坑记在 `docs/07_云端编译排错.md`，包括：
+**Not done** (later phases):
 
-- 某个依赖的上游仓库已 404（原版自己的 CI 地址失效了）
-- 一条 `haxelib` 命令把整个依赖版本矩阵掀了，而当时的脚本把它掩盖了
-- 补丁的两个真实语法错误（多一个花括号把构造函数提前关掉）
-- 一个反直觉的教训：**花括号计数相等查不出这类错**（总数照样凑平）
-- Windows 上编译器进程 OOM，天花板是「提交上限」= 物理内存 + 页面文件
+- **LE object members**: LE's script sprite exposes 32 members, KE 1.8 only 9
+  (missing `visible` / `scaleX` / `scaleY` / `scrollFactorX` / `makeGraphic`, …)
+- **Bridge for the flat KE 1.5.x–1.6.2 API**: those generations used around a
+  hundred flat global functions — a completely different paradigm
+- `countdown` trigger point
 
-有新的失败会继续往那份文档里补。
+**Incompatible**:
+
+- `doEvent` — KE 1.8 has no song-event system, so there's no host for it
 
 ---
 
-## 关于
+## Troubleshooting
+
+Everything hit during the build process is written up in
+`docs/07_云端编译排错.md`, including:
+
+- An upstream dependency repo that 404s (the vanilla CI address is stale)
+- One `haxelib` command that quietly blew away the whole version matrix —
+  and the script at the time was hiding it
+- Two real syntax errors in the patches (a stray brace closing the
+  constructor early)
+- A counter-intuitive lesson: **equal brace counts do not catch that kind of
+  bug** (the totals still balanced out)
+- The compiler process running out of memory on Windows, where the ceiling is
+  the commit limit = physical RAM + page file
+
+New failures get appended to that document.
+
+---
+
+## About
 
 | | |
 |---|---|
-| **作者** | **京葉Viii** |
-| **辅助生成** | 本项目由 **Hy4** 辅助生成 |
-| **底座** | [`kadedev/Kade-Engine` @ tag `1.8`](https://github.com/kadedev/Kade-Engine) |
-| **许可** | 沿用底座原 `LICENSE` |
+| **Author** | **京葉Viii** (Jingye Viii) |
+| **Assisted by** | This project was generated with the assistance of **Hy4** |
+| **Inspiration** | While studying the Lua modchart scripts of the KE-based mod *Bob's Onslaught*, the idea came up: build an engine that truly masters KE mods |
+| **Base source** | [`kadedev/Kade-Engine` @ tag `1.8`](https://github.com/kadedev/Kade-Engine) |
+| **License** | Inherits the base `LICENSE` |
+| **Docs** | [简体中文 / Chinese](KFE.zh-CN.md) |
 
-补丁设计、取证工作与 CI 排错由 Hy4 辅助完成；项目的归属与最终决策属于京葉Viii。
+Patch design, evidence gathering, and CI debugging were done with Hy4's
+assistance; the project belongs to 京葉Viii, who makes the final calls.
 
-本项目是 Kade Engine 的分支，不含任何其他模组的源码。
+This is a fork of Kade Engine and contains no source code from any other mod.
