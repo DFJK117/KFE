@@ -213,7 +213,9 @@
        在 Android 上打开 .kfemod / .kfepack / .kfeds 三种模组包（见 ModImporter.hx）。
        ModImporter 用的是 haxe.zip + sys，在 Android cpp 上完全可用，
        Polymod 也通过 sys 读应用私有存储里的 mods/ packs/，无需 FEATURE_FILESYSTEM。 -->
-  <haxedef name="FEATURE_MODCORE" if="desktop || android" />
+  <!-- 【2026-09-26 实验中】暂时回退 desktop：Android 编 polymod 时 haxe 内存 15GB+，
+       需要确认 polymod/ModCore 编译路径是不是内存炸弹。Windows 本来就是 desktop，不受影响。 -->
+  <haxedef name="FEATURE_MODCORE" if="desktop" />
 
   <!-- ===== KFE 新增：为云端 CI 的 OOM 兜底 ===== -->
   <!-- 第 4 次云端编译挂在：

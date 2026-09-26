@@ -20,7 +20,11 @@ name: KFE Build (Android)
 # 【2026-09-26】Android 战线暂停（用户决定放弃 APK 专攻 Windows）。
 # 判决数据已拿够：haxe 编译 KE1.8 级代码就要 15GB+（三编译器一致、原版源码一致），
 # 与 KFE 补丁无关。需要时在 Actions 页面手动触发。
+# 【实验通道】依赖二分实验用 Android/Linux runner 跑（haxe 编译期内存与目标平台无关，
+# Linux 一轮 20 分钟 vs Windows 40 分钟）。实验结束改回 dispatch only。
 on:
+  push:
+    branches: [main, master, dev]
   workflow_dispatch:
 
 jobs:
