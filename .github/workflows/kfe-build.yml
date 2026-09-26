@@ -23,10 +23,18 @@ on:
 jobs:
   build-windows:
     runs-on: windows-latest
-    timeout-minutes: 90
+    # 原来 90 分钟。第 4 次跑了 38 分钟才 OOM，说明编译本身就很慢；
+    # 现在又把并发压到 2、并加了 --no-opt，时间只会更长。
+    # GitHub job 的硬上限是 6 小时，这里给到 5 小时。
+    timeout-minutes: 300
 
     env:
       HAXELIB_PATH: ${{ github.workspace }}\..\haxelib
+      # 第 4 次 CI 挂在 `Fatal error: exception Out of memory`（OCaml 的报错，
+      # 也就是 haxe 编译进程自己爆内存），跑了 36 分钟后才炸。
+      # 压低 hxcpp 的并发编译数，降低 cl.exe 阶段的内存峰值。
+      # 不设成 1：那会让 C++ 编译慢 4 倍，可能直接撞上 job 时间上限。
+      HXCPP_COMPILE_THREADS: '2'
 
     steps:
       - name: Checkout
@@ -178,6 +186,29 @@ jobs:
             echo "::error::版本守卫没过 —— 先把上面标红的对不上的修好，别往下编译了"
             exit 1
           fi
+
+      # 第 4 次 CI 是 OOM 挂的，但日志里**没有任何**内存信息（GitHub 不打印）。
+      # 先记一笔机器规格，下次再 OOM 才有得比对。
+      - name: 机器规格（诊断 OOM 用）
+        shell: bash
+        run: |
+          echo "=== CPU ==="
+          echo "逻辑处理器: $(NUMBER_OF_PROCESSORS)"
+          echo "=== 内存 ==="
+          powershell -NoProfile -Command "
+            \$cs = Get-CimInstance Win32_ComputerSystem
+            '物理内存(GB) : ' + [math]::Round(\$cs.TotalPhysicalMemory/1GB, 2)
+            '处理器核数   : ' + \$cs.NumberOfLogicalProcessors
+            \$os = Get-CimInstance Win32_OperatingSystem
+            '可用内存(GB) : ' + [math]::Round(\$os.FreePhysicalMemory/1MB, 2)
+            '提交上限(GB) : ' + [math]::Round([double]\$os.TotalVirtualMemorySize/1MB, 2)
+          "
+          echo "=== 页面文件 ==="
+          powershell -NoProfile -Command "
+            Get-CimInstance Win32_PageFileUsage | ForEach-Object {
+              '  ' + \$_.Name + '  已分配(MB): ' + \$_.AllocatedBaseSize
+            }
+          "
 
       - name: 重编 extension-webm（原生库）
         shell: bash

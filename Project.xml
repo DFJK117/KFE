@@ -205,4 +205,14 @@
   <!-- Defines whether the Mods menu will display before launching. -->
   <haxedef name="FEATURE_MODCORE" if="desktop" />
 
+  <!-- ===== KFE 新增：为云端 CI 的 OOM 兜底 ===== -->
+  <!-- 第 4 次云端编译挂在：
+         Fatal error: exception Out of memory
+       这是 OCaml 的运行时报错格式，也就是 **haxe 编译进程自己**把内存吃光了
+       （不是 cl.exe）。跑了 36 分钟后才炸。
+       关掉 haxe 端的 analyzer 优化可以显著降低它的内存峰值。
+       注意：这只影响「haxe 生成 C++」这一步，C++ 仍然由 cl.exe 用 /O2 优化，
+       出品的 exe 不会因此变慢。 -->
+  <haxeflag name="--no-opt" />
+
 </project>
