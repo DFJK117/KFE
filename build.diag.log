@@ -1,17 +1,306 @@
+ - Copying file: assets/songs/spookeez/Voices.ogg -> export/release/windows/bin/assets/songs/spookeez/Voices.ogg
+ - Creating directory: export/release/windows/bin/assets/songs/test
+ - Copying file: assets/songs/test/Inst.ogg -> export/release/windows/bin/assets/songs/test/Inst.ogg
+ - Creating directory: export/release/windows/bin/assets/songs/thorns
+ - Copying file: assets/songs/thorns/Inst.ogg -> export/release/windows/bin/assets/songs/thorns/Inst.ogg
+ - Copying file: assets/songs/thorns/Voices.ogg -> export/release/windows/bin/assets/songs/thorns/Voices.ogg
+ - Creating directory: export/release/windows/bin/assets/songs/tutorial
+ - Copying file: assets/songs/tutorial/Inst.ogg -> export/release/windows/bin/assets/songs/tutorial/Inst.ogg
+ - Copying file: assets/songs/tutorial/Voices.ogg -> export/release/windows/bin/assets/songs/tutorial/Voices.ogg
+ - Creating directory: export/release/windows/bin/assets/songs/winter-horrorland
+ - Copying file: assets/songs/winter-horrorland/Inst.ogg -> export/release/windows/bin/assets/songs/winter-horrorland/Inst.ogg
+ - Copying file: assets/songs/winter-horrorland/Voices.ogg -> export/release/windows/bin/assets/songs/winter-horrorland/Voices.ogg
+ - Creating directory: export/release/windows/bin/assets/shared
+ - Creating directory: export/release/windows/bin/assets/shared/images
+ - Copying file: assets/shared/images/backspace.png -> export/release/windows/bin/assets/shared/images/backspace.png
+ - Copying file: assets/shared/images/backspace.xml -> export/release/windows/bin/assets/shared/images/backspace.xml
+ - Copying file: assets/shared/images/bad.png -> export/release/windows/bin/assets/shared/images/bad.png
+ - Creating directory: export/release/windows/bin/assets/shared/images/characters
+ - Copying file: assets/shared/images/characters/bf-carOffsets.txt -> export/release/windows/bin/assets/shared/images/characters/bf-carOffsets.txt
+ - Copying file: assets/shared/images/characters/bf-christmasOffsets.txt -> export/release/windows/bin/assets/shared/images/characters/bf-christmasOffsets.txt
+ - Copying file: assets/shared/images/characters/bf-pixel-deadOffsets.txt -> export/release/windows/bin/assets/shared/images/characters/bf-pixel-deadOffsets.txt
+ - Copying file: assets/shared/images/characters/bf-pixelOffsets.txt -> export/release/windows/bin/assets/shared/images/characters/bf-pixelOffsets.txt
+ - Copying file: assets/shared/images/characters/bfCar.png -> export/release/windows/bin/assets/shared/images/characters/bfCar.png
+ - Copying file: assets/shared/images/characters/bfCar.xml -> export/release/windows/bin/assets/shared/images/characters/bfCar.xml
+ - Copying file: assets/shared/images/characters/bfChristmas.png -> export/release/windows/bin/assets/shared/images/characters/bfChristmas.png
+ - Copying file: assets/shared/images/characters/bfChristmas.xml -> export/release/windows/bin/assets/shared/images/characters/bfChristmas.xml
+ - Copying file: assets/shared/images/characters/bfOffsets.txt -> export/release/windows/bin/assets/shared/images/characters/bfOffsets.txt
+ - Copying file: assets/shared/images/characters/bfPixel.png -> export/release/windows/bin/assets/shared/images/characters/bfPixel.png
+ - Copying file: assets/shared/images/characters/bfPixel.xml -> export/release/windows/bin/assets/shared/images/characters/bfPixel.xml
+ - Copying file: assets/shared/images/characters/bfPixelsDEAD.png -> export/release/windows/bin/assets/shared/images/characters/bfPixelsDEAD.png
+ - Copying file: assets/shared/images/characters/bfPixelsDEAD.xml -> export/release/windows/bin/assets/shared/images/characters/bfPixelsDEAD.xml
+ - Copying file: assets/shared/images/characters/BOYFRIEND.png -> export/release/windows/bin/assets/shared/images/characters/BOYFRIEND.png
+ - Copying file: assets/shared/images/characters/BOYFRIEND.xml -> export/release/windows/bin/assets/shared/images/characters/BOYFRIEND.xml
+ - Copying file: assets/shared/images/characters/DADDY_DEAREST.png -> export/release/windows/bin/assets/shared/images/characters/DADDY_DEAREST.png
+ - Copying file: assets/shared/images/characters/DADDY_DEAREST.xml -> export/release/windows/bin/assets/shared/images/characters/DADDY_DEAREST.xml
+ - Copying file: assets/shared/images/characters/dadOffsets.txt -> export/release/windows/bin/assets/shared/images/characters/dadOffsets.txt
+ - Copying file: assets/shared/images/characters/gf-carOffsets.txt -> export/release/windows/bin/assets/shared/images/characters/gf-carOffsets.txt
+ - Copying file: assets/shared/images/characters/gf-christmasOffsets.txt -> export/release/windows/bin/assets/shared/images/characters/gf-christmasOffsets.txt
+ - Copying file: assets/shared/images/characters/gf-pixelOffsets.txt -> export/release/windows/bin/assets/shared/images/characters/gf-pixelOffsets.txt
+ - Copying file: assets/shared/images/characters/gfCar.png -> export/release/windows/bin/assets/shared/images/characters/gfCar.png
+ - Copying file: assets/shared/images/characters/gfCar.xml -> export/release/windows/bin/assets/shared/images/characters/gfCar.xml
+ - Copying file: assets/shared/images/characters/gfChristmas.png -> export/release/windows/bin/assets/shared/images/characters/gfChristmas.png
+ - Copying file: assets/shared/images/characters/gfChristmas.xml -> export/release/windows/bin/assets/shared/images/characters/gfChristmas.xml
+ - Copying file: assets/shared/images/characters/gfPixel.png -> export/release/windows/bin/assets/shared/images/characters/gfPixel.png
+ - Copying file: assets/shared/images/characters/gfPixel.xml -> export/release/windows/bin/assets/shared/images/characters/gfPixel.xml
+ - Copying file: assets/shared/images/characters/GF_assets.png -> export/release/windows/bin/assets/shared/images/characters/GF_assets.png
+ - Copying file: assets/shared/images/characters/GF_assets.xml -> export/release/windows/bin/assets/shared/images/characters/GF_assets.xml
+ - Copying file: assets/shared/images/characters/mom-carOffsets.txt -> export/release/windows/bin/assets/shared/images/characters/mom-carOffsets.txt
+ - Copying file: assets/shared/images/characters/momCar.png -> export/release/windows/bin/assets/shared/images/characters/momCar.png
+ - Copying file: assets/shared/images/characters/momCar.xml -> export/release/windows/bin/assets/shared/images/characters/momCar.xml
+ - Copying file: assets/shared/images/characters/momOffsets.txt -> export/release/windows/bin/assets/shared/images/characters/momOffsets.txt
+ - Copying file: assets/shared/images/characters/Mom_Assets.png -> export/release/windows/bin/assets/shared/images/characters/Mom_Assets.png
+ - Copying file: assets/shared/images/characters/Mom_Assets.xml -> export/release/windows/bin/assets/shared/images/characters/Mom_Assets.xml
+ - Copying file: assets/shared/images/characters/mom_dad_christmas_assets.png -> export/release/windows/bin/assets/shared/images/characters/mom_dad_christmas_assets.png
+ - Copying file: assets/shared/images/characters/mom_dad_christmas_assets.xml -> export/release/windows/bin/assets/shared/images/characters/mom_dad_christmas_assets.xml
+ - Copying file: assets/shared/images/characters/monster-christmasOffsets.txt -> export/release/windows/bin/assets/shared/images/characters/monster-christmasOffsets.txt
+ - Copying file: assets/shared/images/characters/monsterChristmas.png -> export/release/windows/bin/assets/shared/images/characters/monsterChristmas.png
+ - Copying file: assets/shared/images/characters/monsterChristmas.xml -> export/release/windows/bin/assets/shared/images/characters/monsterChristmas.xml
+ - Copying file: assets/shared/images/characters/monsterOffsets.txt -> export/release/windows/bin/assets/shared/images/characters/monsterOffsets.txt
+ - Copying file: assets/shared/images/characters/Monster_Assets.png -> export/release/windows/bin/assets/shared/images/characters/Monster_Assets.png
+ - Copying file: assets/shared/images/characters/Monster_Assets.xml -> export/release/windows/bin/assets/shared/images/characters/Monster_Assets.xml
+ - Copying file: assets/shared/images/characters/parents-christmasOffsets.txt -> export/release/windows/bin/assets/shared/images/characters/parents-christmasOffsets.txt
+ - Copying file: assets/shared/images/characters/picoOffsets.txt -> export/release/windows/bin/assets/shared/images/characters/picoOffsets.txt
+ - Copying file: assets/shared/images/characters/Pico_FNF_assetss.png -> export/release/windows/bin/assets/shared/images/characters/Pico_FNF_assetss.png
+ - Copying file: assets/shared/images/characters/Pico_FNF_assetss.xml -> export/release/windows/bin/assets/shared/images/characters/Pico_FNF_assetss.xml
+ - Copying file: assets/shared/images/characters/senpai-angryOffsets.txt -> export/release/windows/bin/assets/shared/images/characters/senpai-angryOffsets.txt
+ - Copying file: assets/shared/images/characters/senpai.png -> export/release/windows/bin/assets/shared/images/characters/senpai.png
+ - Copying file: assets/shared/images/characters/senpai.xml -> export/release/windows/bin/assets/shared/images/characters/senpai.xml
+ - Copying file: assets/shared/images/characters/senpaiOffsets.txt -> export/release/windows/bin/assets/shared/images/characters/senpaiOffsets.txt
+ - Copying file: assets/shared/images/characters/spirit.png -> export/release/windows/bin/assets/shared/images/characters/spirit.png
+ - Copying file: assets/shared/images/characters/spirit.txt -> export/release/windows/bin/assets/shared/images/characters/spirit.txt
+ - Copying file: assets/shared/images/characters/spiritOffsets.txt -> export/release/windows/bin/assets/shared/images/characters/spiritOffsets.txt
+ - Copying file: assets/shared/images/characters/spookyOffsets.txt -> export/release/windows/bin/assets/shared/images/characters/spookyOffsets.txt
+ - Copying file: assets/shared/images/characters/spooky_kids_assets.png -> export/release/windows/bin/assets/shared/images/characters/spooky_kids_assets.png
+ - Copying file: assets/shared/images/characters/spooky_kids_assets.xml -> export/release/windows/bin/assets/shared/images/characters/spooky_kids_assets.xml
+ - Copying file: assets/shared/images/combo.png -> export/release/windows/bin/assets/shared/images/combo.png
+ - Copying file: assets/shared/images/go.png -> export/release/windows/bin/assets/shared/images/go.png
+ - Copying file: assets/shared/images/good.png -> export/release/windows/bin/assets/shared/images/good.png
+ - Copying file: assets/shared/images/grafix.png -> export/release/windows/bin/assets/shared/images/grafix.png
+ - Copying file: assets/shared/images/healthBar.png -> export/release/windows/bin/assets/shared/images/healthBar.png
+ - Copying file: assets/shared/images/images-go-here.txt -> export/release/windows/bin/assets/shared/images/images-go-here.txt
+ - Copying file: assets/shared/images/lol.png -> export/release/windows/bin/assets/shared/images/lol.png
+ - Copying file: assets/shared/images/lose.png -> export/release/windows/bin/assets/shared/images/lose.png
+ - Copying file: assets/shared/images/lose.xml -> export/release/windows/bin/assets/shared/images/lose.xml
+ - Creating directory: export/release/windows/bin/assets/shared/images/noteskins
+ - Copying file: assets/shared/images/noteskins/Arrows-pixel-ends.png -> export/release/windows/bin/assets/shared/images/noteskins/Arrows-pixel-ends.png
+ - Copying file: assets/shared/images/noteskins/Arrows-pixel.png -> export/release/windows/bin/assets/shared/images/noteskins/Arrows-pixel.png
+ - Copying file: assets/shared/images/noteskins/Arrows.png -> export/release/windows/bin/assets/shared/images/noteskins/Arrows.png
+ - Copying file: assets/shared/images/noteskins/Arrows.xml -> export/release/windows/bin/assets/shared/images/noteskins/Arrows.xml
+ - Copying file: assets/shared/images/noteskins/Circles-pixel-ends.png -> export/release/windows/bin/assets/shared/images/noteskins/Circles-pixel-ends.png
+ - Copying file: assets/shared/images/noteskins/Circles-pixel.png -> export/release/windows/bin/assets/shared/images/noteskins/Circles-pixel.png
+ - Copying file: assets/shared/images/noteskins/Circles.png -> export/release/windows/bin/assets/shared/images/noteskins/Circles.png
+ - Copying file: assets/shared/images/noteskins/Circles.xml -> export/release/windows/bin/assets/shared/images/noteskins/Circles.xml
+ - Creating directory: export/release/windows/bin/assets/shared/images/pauseAlt
+ - Copying file: assets/shared/images/pauseAlt/bfLol.png -> export/release/windows/bin/assets/shared/images/pauseAlt/bfLol.png
+ - Copying file: assets/shared/images/pauseAlt/bfLol.xml -> export/release/windows/bin/assets/shared/images/pauseAlt/bfLol.xml
+ - Copying file: assets/shared/images/pauseAlt/pauseBG.png -> export/release/windows/bin/assets/shared/images/pauseAlt/pauseBG.png
+ - Copying file: assets/shared/images/pauseAlt/pauseUI.png -> export/release/windows/bin/assets/shared/images/pauseAlt/pauseUI.png
+ - Copying file: assets/shared/images/pauseAlt/pauseUI.xml -> export/release/windows/bin/assets/shared/images/pauseAlt/pauseUI.xml
+ - Copying file: assets/shared/images/ready.png -> export/release/windows/bin/assets/shared/images/ready.png
+ - Copying file: assets/shared/images/restart.png -> export/release/windows/bin/assets/shared/images/restart.png
+ - Copying file: assets/shared/images/screencapTierImage.png -> export/release/windows/bin/assets/shared/images/screencapTierImage.png
+ - Copying file: assets/shared/images/set.png -> export/release/windows/bin/assets/shared/images/set.png
+ - Copying file: assets/shared/images/shit.png -> export/release/windows/bin/assets/shared/images/shit.png
+ - Copying file: assets/shared/images/sick.png -> export/release/windows/bin/assets/shared/images/sick.png
+ - Copying file: assets/shared/images/speech_bubble_talking.png -> export/release/windows/bin/assets/shared/images/speech_bubble_talking.png
+ - Copying file: assets/shared/images/speech_bubble_talking.xml -> export/release/windows/bin/assets/shared/images/speech_bubble_talking.xml
+ - Copying file: assets/shared/images/stageback.png -> export/release/windows/bin/assets/shared/images/stageback.png
+ - Copying file: assets/shared/images/stagecurtains.png -> export/release/windows/bin/assets/shared/images/stagecurtains.png
+ - Copying file: assets/shared/images/stagefront.png -> export/release/windows/bin/assets/shared/images/stagefront.png
+ - Copying file: assets/shared/images/stage_light.png -> export/release/windows/bin/assets/shared/images/stage_light.png
+ - Copying file: assets/shared/images/week54prototype.png -> export/release/windows/bin/assets/shared/images/week54prototype.png
+ - Copying file: assets/shared/images/zzzzzzzz.png -> export/release/windows/bin/assets/shared/images/zzzzzzzz.png
+ - Creating directory: export/release/windows/bin/assets/shared/music
+ - Copying file: assets/shared/music/breakfast.ogg -> export/release/windows/bin/assets/shared/music/breakfast.ogg
+ - Copying file: assets/shared/music/gameOver.ogg -> export/release/windows/bin/assets/shared/music/gameOver.ogg
+ - Copying file: assets/shared/music/gameOverEnd.ogg -> export/release/windows/bin/assets/shared/music/gameOverEnd.ogg
+ - Creating directory: export/release/windows/bin/assets/shared/sounds
+ - Copying file: assets/shared/sounds/ANGRY.ogg -> export/release/windows/bin/assets/shared/sounds/ANGRY.ogg
+ - Copying file: assets/shared/sounds/ANGRY_TEXT_BOX.ogg -> export/release/windows/bin/assets/shared/sounds/ANGRY_TEXT_BOX.ogg
+ - Copying file: assets/shared/sounds/badnoise1.ogg -> export/release/windows/bin/assets/shared/sounds/badnoise1.ogg
+ - Copying file: assets/shared/sounds/badnoise2.ogg -> export/release/windows/bin/assets/shared/sounds/badnoise2.ogg
+ - Copying file: assets/shared/sounds/badnoise3.ogg -> export/release/windows/bin/assets/shared/sounds/badnoise3.ogg
+ - Copying file: assets/shared/sounds/carPass0.ogg -> export/release/windows/bin/assets/shared/sounds/carPass0.ogg
+ - Copying file: assets/shared/sounds/carPass1.ogg -> export/release/windows/bin/assets/shared/sounds/carPass1.ogg
+ - Copying file: assets/shared/sounds/CLAP.ogg -> export/release/windows/bin/assets/shared/sounds/CLAP.ogg
+ - Copying file: assets/shared/sounds/clickText.ogg -> export/release/windows/bin/assets/shared/sounds/clickText.ogg
+ - Copying file: assets/shared/sounds/fnf_loss_sfx-pixel.ogg -> export/release/windows/bin/assets/shared/sounds/fnf_loss_sfx-pixel.ogg
+ - Copying file: assets/shared/sounds/fnf_loss_sfx.ogg -> export/release/windows/bin/assets/shared/sounds/fnf_loss_sfx.ogg
+ - Copying file: assets/shared/sounds/GF_1.ogg -> export/release/windows/bin/assets/shared/sounds/GF_1.ogg
+ - Copying file: assets/shared/sounds/GF_2.ogg -> export/release/windows/bin/assets/shared/sounds/GF_2.ogg
+ - Copying file: assets/shared/sounds/GF_3.ogg -> export/release/windows/bin/assets/shared/sounds/GF_3.ogg
+ - Copying file: assets/shared/sounds/GF_4.ogg -> export/release/windows/bin/assets/shared/sounds/GF_4.ogg
+ - Copying file: assets/shared/sounds/intro1-pixel.ogg -> export/release/windows/bin/assets/shared/sounds/intro1-pixel.ogg
+ - Copying file: assets/shared/sounds/intro1.ogg -> export/release/windows/bin/assets/shared/sounds/intro1.ogg
+ - Copying file: assets/shared/sounds/intro2-pixel.ogg -> export/release/windows/bin/assets/shared/sounds/intro2-pixel.ogg
+ - Copying file: assets/shared/sounds/intro2.ogg -> export/release/windows/bin/assets/shared/sounds/intro2.ogg
+ - Copying file: assets/shared/sounds/intro3-pixel.ogg -> export/release/windows/bin/assets/shared/sounds/intro3-pixel.ogg
+ - Copying file: assets/shared/sounds/intro3.ogg -> export/release/windows/bin/assets/shared/sounds/intro3.ogg
+ - Copying file: assets/shared/sounds/introGo-pixel.ogg -> export/release/windows/bin/assets/shared/sounds/introGo-pixel.ogg
+ - Copying file: assets/shared/sounds/introGo.ogg -> export/release/windows/bin/assets/shared/sounds/introGo.ogg
+ - Copying file: assets/shared/sounds/Lights_Shut_off.ogg -> export/release/windows/bin/assets/shared/sounds/Lights_Shut_off.ogg
+ - Copying file: assets/shared/sounds/Lights_Turn_On.ogg -> export/release/windows/bin/assets/shared/sounds/Lights_Turn_On.ogg
+ - Copying file: assets/shared/sounds/missnote-pixel1.ogg -> export/release/windows/bin/assets/shared/sounds/missnote-pixel1.ogg
+ - Copying file: assets/shared/sounds/missnote-pixel2.ogg -> export/release/windows/bin/assets/shared/sounds/missnote-pixel2.ogg
+ - Copying file: assets/shared/sounds/missnote-pixel3.ogg -> export/release/windows/bin/assets/shared/sounds/missnote-pixel3.ogg
+ - Copying file: assets/shared/sounds/missnote1.ogg -> export/release/windows/bin/assets/shared/sounds/missnote1.ogg
+ - Copying file: assets/shared/sounds/missnote2.ogg -> export/release/windows/bin/assets/shared/sounds/missnote2.ogg
+ - Copying file: assets/shared/sounds/missnote3.ogg -> export/release/windows/bin/assets/shared/sounds/missnote3.ogg
+ - Copying file: assets/shared/sounds/pixelText.ogg -> export/release/windows/bin/assets/shared/sounds/pixelText.ogg
+ - Copying file: assets/shared/sounds/Senpai_Dies.ogg -> export/release/windows/bin/assets/shared/sounds/Senpai_Dies.ogg
+ - Copying file: assets/shared/sounds/SNAP.ogg -> export/release/windows/bin/assets/shared/sounds/SNAP.ogg
+ - Copying file: assets/shared/sounds/sounds-go-here.txt -> export/release/windows/bin/assets/shared/sounds/sounds-go-here.txt
+ - Copying file: assets/shared/sounds/soundTest.ogg -> export/release/windows/bin/assets/shared/sounds/soundTest.ogg
+ - Copying file: assets/shared/sounds/thunder_1.ogg -> export/release/windows/bin/assets/shared/sounds/thunder_1.ogg
+ - Copying file: assets/shared/sounds/thunder_2.ogg -> export/release/windows/bin/assets/shared/sounds/thunder_2.ogg
+ - Copying file: assets/shared/sounds/train_passes.ogg -> export/release/windows/bin/assets/shared/sounds/train_passes.ogg
+ - Creating directory: export/release/windows/bin/assets/tutorial
+ - Copying file: assets/tutorial/tutorial_stuff_here.txt -> export/release/windows/bin/assets/tutorial/tutorial_stuff_here.txt
+ - Creating directory: export/release/windows/bin/assets/week1
+ - Copying file: assets/week1/week1_stuff_here.txt -> export/release/windows/bin/assets/week1/week1_stuff_here.txt
+ - Creating directory: export/release/windows/bin/assets/week2
+ - Creating directory: export/release/windows/bin/assets/week2/images
+ - Copying file: assets/week2/images/halloween_bg.png -> export/release/windows/bin/assets/week2/images/halloween_bg.png
+ - Copying file: assets/week2/images/halloween_bg.xml -> export/release/windows/bin/assets/week2/images/halloween_bg.xml
+ - Copying file: assets/week2/week2_stuff_here.txt -> export/release/windows/bin/assets/week2/week2_stuff_here.txt
+ - Creating directory: export/release/windows/bin/assets/week3
+ - Creating directory: export/release/windows/bin/assets/week3/images
+ - Creating directory: export/release/windows/bin/assets/week3/images/philly
+ - Copying file: assets/week3/images/philly/behindTrain.png -> export/release/windows/bin/assets/week3/images/philly/behindTrain.png
+ - Copying file: assets/week3/images/philly/city.png -> export/release/windows/bin/assets/week3/images/philly/city.png
+ - Copying file: assets/week3/images/philly/sky.png -> export/release/windows/bin/assets/week3/images/philly/sky.png
+ - Copying file: assets/week3/images/philly/street.png -> export/release/windows/bin/assets/week3/images/philly/street.png
+ - Copying file: assets/week3/images/philly/train.png -> export/release/windows/bin/assets/week3/images/philly/train.png
+ - Copying file: assets/week3/images/philly/win0.png -> export/release/windows/bin/assets/week3/images/philly/win0.png
+ - Copying file: assets/week3/images/philly/win1.png -> export/release/windows/bin/assets/week3/images/philly/win1.png
+ - Copying file: assets/week3/images/philly/win2.png -> export/release/windows/bin/assets/week3/images/philly/win2.png
+ - Copying file: assets/week3/images/philly/win3.png -> export/release/windows/bin/assets/week3/images/philly/win3.png
+ - Copying file: assets/week3/images/philly/win4.png -> export/release/windows/bin/assets/week3/images/philly/win4.png
+ - Copying file: assets/week3/week3_stuff_here.txt -> export/release/windows/bin/assets/week3/week3_stuff_here.txt
+ - Creating directory: export/release/windows/bin/assets/week4
+ - Creating directory: export/release/windows/bin/assets/week4/images
+ - Creating directory: export/release/windows/bin/assets/week4/images/limo
+ - Copying file: assets/week4/images/limo/bgLimo.png -> export/release/windows/bin/assets/week4/images/limo/bgLimo.png
+ - Copying file: assets/week4/images/limo/bgLimo.xml -> export/release/windows/bin/assets/week4/images/limo/bgLimo.xml
+ - Copying file: assets/week4/images/limo/dumb.png -> export/release/windows/bin/assets/week4/images/limo/dumb.png
+ - Copying file: assets/week4/images/limo/fastCarLol.png -> export/release/windows/bin/assets/week4/images/limo/fastCarLol.png
+ - Copying file: assets/week4/images/limo/limoDancer.png -> export/release/windows/bin/assets/week4/images/limo/limoDancer.png
+ - Copying file: assets/week4/images/limo/limoDancer.xml -> export/release/windows/bin/assets/week4/images/limo/limoDancer.xml
+ - Copying file: assets/week4/images/limo/limoDrive.png -> export/release/windows/bin/assets/week4/images/limo/limoDrive.png
+ - Copying file: assets/week4/images/limo/limoDrive.xml -> export/release/windows/bin/assets/week4/images/limo/limoDrive.xml
+ - Copying file: assets/week4/images/limo/limoOverlay.png -> export/release/windows/bin/assets/week4/images/limo/limoOverlay.png
+ - Copying file: assets/week4/images/limo/limoSunset.png -> export/release/windows/bin/assets/week4/images/limo/limoSunset.png
+ - Copying file: assets/week4/week4_stuff_here.txt -> export/release/windows/bin/assets/week4/week4_stuff_here.txt
+ - Creating directory: export/release/windows/bin/assets/week5
+ - Creating directory: export/release/windows/bin/assets/week5/images
+ - Creating directory: export/release/windows/bin/assets/week5/images/christmas
+ - Copying file: assets/week5/images/christmas/bgEscalator.png -> export/release/windows/bin/assets/week5/images/christmas/bgEscalator.png
+ - Copying file: assets/week5/images/christmas/bgWalls.png -> export/release/windows/bin/assets/week5/images/christmas/bgWalls.png
+ - Copying file: assets/week5/images/christmas/bottomBop.png -> export/release/windows/bin/assets/week5/images/christmas/bottomBop.png
+ - Copying file: assets/week5/images/christmas/bottomBop.xml -> export/release/windows/bin/assets/week5/images/christmas/bottomBop.xml
+ - Copying file: assets/week5/images/christmas/christmasTree.png -> export/release/windows/bin/assets/week5/images/christmas/christmasTree.png
+ - Copying file: assets/week5/images/christmas/christmasWall.png -> export/release/windows/bin/assets/week5/images/christmas/christmasWall.png
+ - Copying file: assets/week5/images/christmas/evilBG.png -> export/release/windows/bin/assets/week5/images/christmas/evilBG.png
+ - Copying file: assets/week5/images/christmas/evilSnow.png -> export/release/windows/bin/assets/week5/images/christmas/evilSnow.png
+ - Copying file: assets/week5/images/christmas/evilTree.png -> export/release/windows/bin/assets/week5/images/christmas/evilTree.png
+ - Copying file: assets/week5/images/christmas/fgSnow.png -> export/release/windows/bin/assets/week5/images/christmas/fgSnow.png
+ - Copying file: assets/week5/images/christmas/santa.png -> export/release/windows/bin/assets/week5/images/christmas/santa.png
+ - Copying file: assets/week5/images/christmas/santa.xml -> export/release/windows/bin/assets/week5/images/christmas/santa.xml
+ - Copying file: assets/week5/images/christmas/upperBop.png -> export/release/windows/bin/assets/week5/images/christmas/upperBop.png
+ - Copying file: assets/week5/images/christmas/upperBop.xml -> export/release/windows/bin/assets/week5/images/christmas/upperBop.xml
+ - Copying file: assets/week5/week5_stuff_here.txt -> export/release/windows/bin/assets/week5/week5_stuff_here.txt
+ - Creating directory: export/release/windows/bin/assets/week6
+ - Creating directory: export/release/windows/bin/assets/week6/images
+ - Creating directory: export/release/windows/bin/assets/week6/images/weeb
+ - Copying file: assets/week6/images/weeb/animatedEvilSchool.png -> export/release/windows/bin/assets/week6/images/weeb/animatedEvilSchool.png
+ - Copying file: assets/week6/images/weeb/animatedEvilSchool.xml -> export/release/windows/bin/assets/week6/images/weeb/animatedEvilSchool.xml
+ - Copying file: assets/week6/images/weeb/bfPortrait.png -> export/release/windows/bin/assets/week6/images/weeb/bfPortrait.png
+ - Copying file: assets/week6/images/weeb/bfPortrait.xml -> export/release/windows/bin/assets/week6/images/weeb/bfPortrait.xml
+ - Copying file: assets/week6/images/weeb/bgFreaks.png -> export/release/windows/bin/assets/week6/images/weeb/bgFreaks.png
+ - Copying file: assets/week6/images/weeb/bgFreaks.xml -> export/release/windows/bin/assets/week6/images/weeb/bgFreaks.xml
+ - Copying file: assets/week6/images/weeb/evilSchoolBG.png -> export/release/windows/bin/assets/week6/images/weeb/evilSchoolBG.png
+ - Copying file: assets/week6/images/weeb/evilSchoolFG.png -> export/release/windows/bin/assets/week6/images/weeb/evilSchoolFG.png
+ - Copying file: assets/week6/images/weeb/petals.png -> export/release/windows/bin/assets/week6/images/weeb/petals.png
+ - Copying file: assets/week6/images/weeb/petals.xml -> export/release/windows/bin/assets/week6/images/weeb/petals.xml
+ - Creating directory: export/release/windows/bin/assets/week6/images/weeb/pixelUI
+ - Copying file: assets/week6/images/weeb/pixelUI/arrowEnds.png -> export/release/windows/bin/assets/week6/images/weeb/pixelUI/arrowEnds.png
+ - Copying file: assets/week6/images/weeb/pixelUI/arrows-pixels.png -> export/release/windows/bin/assets/week6/images/weeb/pixelUI/arrows-pixels.png
+ - Copying file: assets/week6/images/weeb/pixelUI/bad-pixel.png -> export/release/windows/bin/assets/week6/images/weeb/pixelUI/bad-pixel.png
+ - Copying file: assets/week6/images/weeb/pixelUI/combo-pixel.png -> export/release/windows/bin/assets/week6/images/weeb/pixelUI/combo-pixel.png
+ - Copying file: assets/week6/images/weeb/pixelUI/date-pixel.png -> export/release/windows/bin/assets/week6/images/weeb/pixelUI/date-pixel.png
+ - Copying file: assets/week6/images/weeb/pixelUI/dialogueBox-evil.png -> export/release/windows/bin/assets/week6/images/weeb/pixelUI/dialogueBox-evil.png
+ - Copying file: assets/week6/images/weeb/pixelUI/dialogueBox-evil.xml -> export/release/windows/bin/assets/week6/images/weeb/pixelUI/dialogueBox-evil.xml
+ - Copying file: assets/week6/images/weeb/pixelUI/dialogueBox-pixel.png -> export/release/windows/bin/assets/week6/images/weeb/pixelUI/dialogueBox-pixel.png
+ - Copying file: assets/week6/images/weeb/pixelUI/dialogueBox-pixel.xml -> export/release/windows/bin/assets/week6/images/weeb/pixelUI/dialogueBox-pixel.xml
+ - Copying file: assets/week6/images/weeb/pixelUI/dialogueBox-senpaiMad.png -> export/release/windows/bin/assets/week6/images/weeb/pixelUI/dialogueBox-senpaiMad.png
+ - Copying file: assets/week6/images/weeb/pixelUI/dialogueBox-senpaiMad.xml -> export/release/windows/bin/assets/week6/images/weeb/pixelUI/dialogueBox-senpaiMad.xml
+ - Copying file: assets/week6/images/weeb/pixelUI/good-pixel.png -> export/release/windows/bin/assets/week6/images/weeb/pixelUI/good-pixel.png
+ - Copying file: assets/week6/images/weeb/pixelUI/hand_textbox.png -> export/release/windows/bin/assets/week6/images/weeb/pixelUI/hand_textbox.png
+ - Copying file: assets/week6/images/weeb/pixelUI/num0-pixel.png -> export/release/windows/bin/assets/week6/images/weeb/pixelUI/num0-pixel.png
+ - Copying file: assets/week6/images/weeb/pixelUI/num1-pixel.png -> export/release/windows/bin/assets/week6/images/weeb/pixelUI/num1-pixel.png
+ - Copying file: assets/week6/images/weeb/pixelUI/num2-pixel.png -> export/release/windows/bin/assets/week6/images/weeb/pixelUI/num2-pixel.png
+ - Copying file: assets/week6/images/weeb/pixelUI/num3-pixel.png -> export/release/windows/bin/assets/week6/images/weeb/pixelUI/num3-pixel.png
+ - Copying file: assets/week6/images/weeb/pixelUI/num4-pixel.png -> export/release/windows/bin/assets/week6/images/weeb/pixelUI/num4-pixel.png
+ - Copying file: assets/week6/images/weeb/pixelUI/num5-pixel.png -> export/release/windows/bin/assets/week6/images/weeb/pixelUI/num5-pixel.png
+ - Copying file: assets/week6/images/weeb/pixelUI/num6-pixel.png -> export/release/windows/bin/assets/week6/images/weeb/pixelUI/num6-pixel.png
+ - Copying file: assets/week6/images/weeb/pixelUI/num7-pixel.png -> export/release/windows/bin/assets/week6/images/weeb/pixelUI/num7-pixel.png
+ - Copying file: assets/week6/images/weeb/pixelUI/num8-pixel.png -> export/release/windows/bin/assets/week6/images/weeb/pixelUI/num8-pixel.png
+ - Copying file: assets/week6/images/weeb/pixelUI/num9-pixel.png -> export/release/windows/bin/assets/week6/images/weeb/pixelUI/num9-pixel.png
+ - Copying file: assets/week6/images/weeb/pixelUI/ready-pixel.png -> export/release/windows/bin/assets/week6/images/weeb/pixelUI/ready-pixel.png
+ - Copying file: assets/week6/images/weeb/pixelUI/set-pixel.png -> export/release/windows/bin/assets/week6/images/weeb/pixelUI/set-pixel.png
+ - Copying file: assets/week6/images/weeb/pixelUI/shit-pixel.png -> export/release/windows/bin/assets/week6/images/weeb/pixelUI/shit-pixel.png
+ - Copying file: assets/week6/images/weeb/pixelUI/sick-pixel.png -> export/release/windows/bin/assets/week6/images/weeb/pixelUI/sick-pixel.png
+ - Copying file: assets/week6/images/weeb/senpaiCrazy.png -> export/release/windows/bin/assets/week6/images/weeb/senpaiCrazy.png
+ - Copying file: assets/week6/images/weeb/senpaiCrazy.xml -> export/release/windows/bin/assets/week6/images/weeb/senpaiCrazy.xml
+ - Copying file: assets/week6/images/weeb/senpaiPortrait.png -> export/release/windows/bin/assets/week6/images/weeb/senpaiPortrait.png
+ - Copying file: assets/week6/images/weeb/senpaiPortrait.xml -> export/release/windows/bin/assets/week6/images/weeb/senpaiPortrait.xml
+ - Copying file: assets/week6/images/weeb/spiritFaceForward.png -> export/release/windows/bin/assets/week6/images/weeb/spiritFaceForward.png
+ - Copying file: assets/week6/images/weeb/weebSchool.png -> export/release/windows/bin/assets/week6/images/weeb/weebSchool.png
+ - Copying file: assets/week6/images/weeb/weebSky.png -> export/release/windows/bin/assets/week6/images/weeb/weebSky.png
+ - Copying file: assets/week6/images/weeb/weebStreet.png -> export/release/windows/bin/assets/week6/images/weeb/weebStreet.png
+ - Copying file: assets/week6/images/weeb/weebTrees.png -> export/release/windows/bin/assets/week6/images/weeb/weebTrees.png
+ - Copying file: assets/week6/images/weeb/weebTrees.txt -> export/release/windows/bin/assets/week6/images/weeb/weebTrees.txt
+ - Copying file: assets/week6/images/weeb/weebTreesBack.png -> export/release/windows/bin/assets/week6/images/weeb/weebTreesBack.png
+ - Creating directory: export/release/windows/bin/assets/week6/music
+ - Copying file: assets/week6/music/gameOver-pixel.ogg -> export/release/windows/bin/assets/week6/music/gameOver-pixel.ogg
+ - Copying file: assets/week6/music/gameOverEnd-pixel.ogg -> export/release/windows/bin/assets/week6/music/gameOverEnd-pixel.ogg
+ - Copying file: assets/week6/music/Lunchbox.ogg -> export/release/windows/bin/assets/week6/music/Lunchbox.ogg
+ - Copying file: assets/week6/music/LunchboxScary.ogg -> export/release/windows/bin/assets/week6/music/LunchboxScary.ogg
+ - Copying file: assets/week6/week6_stuff_here.txt -> export/release/windows/bin/assets/week6/week6_stuff_here.txt
+ - Creating directory: export/release/windows/bin/assets/sm
+ - Copying file: assets/sm/HOW TO ADD SM FILES.txt -> export/release/windows/bin/assets/sm/HOW TO ADD SM FILES.txt
+ - Creating directory: export/release/windows/bin/mods
+ - Creating directory: export/release/windows/bin/mods/introMod
+ - Creating directory: export/release/windows/bin/mods/introMod/images
+ - Copying file: example_mods/introMod/images/KadeEngineLogo.png -> export/release/windows/bin/mods/introMod/images/KadeEngineLogo.png
+ - Creating directory: export/release/windows/bin/mods/introMod/_append
+ - Creating directory: export/release/windows/bin/mods/introMod/_append/data
+ - Copying file: example_mods/introMod/_append/data/introText.txt -> export/release/windows/bin/mods/introMod/_append/data/introText.txt
+ - Copying file: example_mods/introMod/_polymod_meta.json -> export/release/windows/bin/mods/introMod/_polymod_meta.json
+ - Copying file: example_mods/README.md -> export/release/windows/bin/mods/README.md
+ - Copying file: art/readme.txt -> export/release/windows/bin/do NOT readme.txt
+ - Copying file: LICENSE -> export/release/windows/bin/LICENSE.txt
+ - Creating directory: export/release/windows/bin/manifest
+ - Writing file: export/release/windows/bin/manifest/songs.json
+ - Writing file: export/release/windows/bin/manifest/shared.json
+ - Writing file: export/release/windows/bin/manifest/tutorial.json
+ - Writing file: export/release/windows/bin/manifest/week1.json
+ - Writing file: export/release/windows/bin/manifest/week2.json
+ - Writing file: export/release/windows/bin/manifest/week3.json
+ - Writing file: export/release/windows/bin/manifest/week4.json
+ - Writing file: export/release/windows/bin/manifest/week5.json
+ - Writing file: export/release/windows/bin/manifest/week6.json
+ - Writing file: export/release/windows/bin/manifest/sm.json
+ - Writing file: export/release/windows/bin/manifest/default.json
 
-_/\\\\\\______________________________________________
-_\////\\\______________________________________________
-_____\/\\\_____/\\\_____________________________________
-______\/\\\____\///_____/\\\\\__/\\\\\_______/\\\\\\\\___
-_______\/\\\_____/\\\__/\\\///\\\\\///\\\___/\\\/////\\\__
-________\/\\\____\/\\\_\/\\\_\//\\\__\/\\\__/\\\\\\\\\\\___
-_________\/\\\____\/\\\_\/\\\__\/\\\__\/\\\_\//\\///////____
-________/\\\\\\\\\_\/\\\_\/\\\__\/\\\__\/\\\__\//\\\\\\\\\\__
-________\/////////__\///__\///___\///___\///____\//////////___
-
-Lime Command-Line Tools (7.9.0)
-
-Initializing project...
-Using project file: D:\a\KFE\KFE/project.xml
-Reading Lime config: C:\Users\runneradmin\.lime\config.xml
+Running command: BUILD
+ - Copying library file: D:/a/KFE/KFE/../haxelib/lime/7,9,0/ndll/Windows64/lime.ndll -> export/release/windows/bin/lime.ndll
+ - Copying library file: D:/a/KFE/KFE/../haxelib/extension-webm/git/ndll/Windows64/extension-webm.ndll -> export/release/windows/bin/extension-webm.ndll
+ - Running command: haxe export/release/windows/haxe/release.hxml -D HXCPP_M64 -D no_console
 14:26:05 avail=13518MB commitLimit=19323MB
+14:27:08 avail=8686MB commitLimit=19323MB
+
+        'haxe WS(GB): ' + [math]::Round($_.WorkingSet64/1GB,2) + '  PM(GB): ' + 
+[math]::Round($_.PagedMemorySize64/1GB,2)
+      
