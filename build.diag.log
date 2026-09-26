@@ -1,3 +1,281 @@
+
+_/\\\\\\______________________________________________
+_\////\\\______________________________________________
+_____\/\\\_____/\\\_____________________________________
+______\/\\\____\///_____/\\\\\__/\\\\\_______/\\\\\\\\___
+_______\/\\\_____/\\\__/\\\///\\\\\///\\\___/\\\/////\\\__
+________\/\\\____\/\\\_\/\\\_\//\\\__\/\\\__/\\\\\\\\\\\___
+_________\/\\\____\/\\\_\/\\\__\/\\\__\/\\\_\//\\///////____
+________/\\\\\\\\\_\/\\\_\/\\\__\/\\\__\/\\\__\//\\\\\\\\\\__
+________\/////////__\///__\///___\///___\///____\//////////___
+
+Lime Command-Line Tools (7.9.0)
+
+Initializing project...
+Using project file: D:\a\KFE\KFE/project.xml
+Reading Lime config: C:\Users\runneradmin\.lime\config.xml
+
+Running command: UPDATE
+ - Detecting font name: assets/fonts/pixel.otf -> "Pixel Arial 11 Bold"
+ - Detecting font name: assets/fonts/vcr.ttf -> "VCR OSD Mono"
+ - Detecting font name: D:/a/KFE/KFE/../haxelib/flixel/4,9,0/assets/fonts/nokiafc22.ttf -> "Nokia Cellphone FC Small"
+ - Detecting font name: D:/a/KFE/KFE/../haxelib/flixel/4,9,0/assets/fonts/monsterrat.ttf -> "Monsterrat"
+ - Creating directory: export
+ - Creating directory: export/release
+ - Creating directory: export/release/windows
+ - Creating directory: export/release/windows/obj
+ - Creating directory: export/release/windows/haxe
+ - Creating directory: export/release/windows/bin
+ - Copying template file: D:/a/KFE/KFE/../haxelib/openfl/9,1,0/assets/templates/haxe/ApplicationMain.hx -> export/release/windows/haxe/ApplicationMain.hx
+ - Copying template file: D:/a/KFE/KFE/../haxelib/lime/7,9,0/templates/haxe/ManifestResources.hx -> export/release/windows/haxe/ManifestResources.hx
+ - Copying template file: D:/a/KFE/KFE/../haxelib/lime/7,9,0/templates/cpp/hxml/debug.hxml -> export/release/windows/haxe/debug.hxml
+ - Copying template file: D:/a/KFE/KFE/../haxelib/lime/7,9,0/templates/cpp/hxml/final.hxml -> export/release/windows/haxe/final.hxml
+ - Copying template file: D:/a/KFE/KFE/../haxelib/lime/7,9,0/templates/cpp/hxml/release.hxml -> export/release/windows/haxe/release.hxml
+ - Creating directory: export/release/windows/bin/assets
+ - Creating directory: export/release/windows/bin/assets/data
+ - Copying file: assets/preload/data/characterList.txt -> export/release/windows/bin/assets/data/characterList.txt
+ - Creating directory: export/release/windows/bin/assets/data/characters
+ - Copying file: assets/preload/data/characters/gf.json -> export/release/windows/bin/assets/data/characters/gf.json
+ - Copying file: assets/preload/data/controls.txt -> export/release/windows/bin/assets/data/controls.txt
+ - Copying file: assets/preload/data/data-goes-here.txt -> export/release/windows/bin/assets/data/data-goes-here.txt
+ - Copying file: assets/preload/data/freeplaySonglist.txt -> export/release/windows/bin/assets/data/freeplaySonglist.txt
+ - Copying file: assets/preload/data/gfVersionList.txt -> export/release/windows/bin/assets/data/gfVersionList.txt
+ - Copying file: assets/preload/data/introText.txt -> export/release/windows/bin/assets/data/introText.txt
+ - Copying file: assets/preload/data/main-view.xml -> export/release/windows/bin/assets/data/main-view.xml
+ - Copying file: assets/preload/data/noteStyleList.txt -> export/release/windows/bin/assets/data/noteStyleList.txt
+ - Creating directory: export/release/windows/bin/assets/data/songs
+ - Creating directory: export/release/windows/bin/assets/data/songs/blammed
+ - Copying file: assets/preload/data/songs/blammed/blammed-easy.json -> export/release/windows/bin/assets/data/songs/blammed/blammed-easy.json
+ - Copying file: assets/preload/data/songs/blammed/blammed-hard.json -> export/release/windows/bin/assets/data/songs/blammed/blammed-hard.json
+ - Copying file: assets/preload/data/songs/blammed/blammed.json -> export/release/windows/bin/assets/data/songs/blammed/blammed.json
+ - Copying file: assets/preload/data/songs/blammed/_meta.json -> export/release/windows/bin/assets/data/songs/blammed/_meta.json
+ - Creating directory: export/release/windows/bin/assets/data/songs/bopeebo
+ - Copying file: assets/preload/data/songs/bopeebo/bopeebo-easy.json -> export/release/windows/bin/assets/data/songs/bopeebo/bopeebo-easy.json
+ - Copying file: assets/preload/data/songs/bopeebo/bopeebo-hard.json -> export/release/windows/bin/assets/data/songs/bopeebo/bopeebo-hard.json
+ - Copying file: assets/preload/data/songs/bopeebo/bopeebo.json -> export/release/windows/bin/assets/data/songs/bopeebo/bopeebo.json
+ - Copying file: assets/preload/data/songs/bopeebo/_meta.json -> export/release/windows/bin/assets/data/songs/bopeebo/_meta.json
+ - Creating directory: export/release/windows/bin/assets/data/songs/cocoa
+ - Copying file: assets/preload/data/songs/cocoa/cocoa-easy.json -> export/release/windows/bin/assets/data/songs/cocoa/cocoa-easy.json
+ - Copying file: assets/preload/data/songs/cocoa/cocoa-hard.json -> export/release/windows/bin/assets/data/songs/cocoa/cocoa-hard.json
+ - Copying file: assets/preload/data/songs/cocoa/cocoa.json -> export/release/windows/bin/assets/data/songs/cocoa/cocoa.json
+ - Copying file: assets/preload/data/songs/cocoa/_meta.json -> export/release/windows/bin/assets/data/songs/cocoa/_meta.json
+ - Creating directory: export/release/windows/bin/assets/data/songs/dadbattle
+ - Copying file: assets/preload/data/songs/dadbattle/dadbattle-easy.json -> export/release/windows/bin/assets/data/songs/dadbattle/dadbattle-easy.json
+ - Copying file: assets/preload/data/songs/dadbattle/dadbattle-hard.json -> export/release/windows/bin/assets/data/songs/dadbattle/dadbattle-hard.json
+ - Copying file: assets/preload/data/songs/dadbattle/dadbattle.json -> export/release/windows/bin/assets/data/songs/dadbattle/dadbattle.json
+ - Copying file: assets/preload/data/songs/dadbattle/_meta.json -> export/release/windows/bin/assets/data/songs/dadbattle/_meta.json
+ - Creating directory: export/release/windows/bin/assets/data/songs/eggnog
+ - Copying file: assets/preload/data/songs/eggnog/eggnog-easy.json -> export/release/windows/bin/assets/data/songs/eggnog/eggnog-easy.json
+ - Copying file: assets/preload/data/songs/eggnog/eggnog-hard.json -> export/release/windows/bin/assets/data/songs/eggnog/eggnog-hard.json
+ - Copying file: assets/preload/data/songs/eggnog/eggnog.json -> export/release/windows/bin/assets/data/songs/eggnog/eggnog.json
+ - Copying file: assets/preload/data/songs/eggnog/_meta.json -> export/release/windows/bin/assets/data/songs/eggnog/_meta.json
+ - Creating directory: export/release/windows/bin/assets/data/songs/fresh
+ - Copying file: assets/preload/data/songs/fresh/fresh-easy.json -> export/release/windows/bin/assets/data/songs/fresh/fresh-easy.json
+ - Copying file: assets/preload/data/songs/fresh/fresh-hard.json -> export/release/windows/bin/assets/data/songs/fresh/fresh-hard.json
+ - Copying file: assets/preload/data/songs/fresh/fresh.json -> export/release/windows/bin/assets/data/songs/fresh/fresh.json
+ - Copying file: assets/preload/data/songs/fresh/_meta.json -> export/release/windows/bin/assets/data/songs/fresh/_meta.json
+ - Creating directory: export/release/windows/bin/assets/data/songs/high
+ - Copying file: assets/preload/data/songs/high/high-easy.json -> export/release/windows/bin/assets/data/songs/high/high-easy.json
+ - Copying file: assets/preload/data/songs/high/high-hard.json -> export/release/windows/bin/assets/data/songs/high/high-hard.json
+ - Copying file: assets/preload/data/songs/high/high.json -> export/release/windows/bin/assets/data/songs/high/high.json
+ - Copying file: assets/preload/data/songs/high/_meta.json -> export/release/windows/bin/assets/data/songs/high/_meta.json
+ - Creating directory: export/release/windows/bin/assets/data/songs/milf
+ - Copying file: assets/preload/data/songs/milf/milf-easy.json -> export/release/windows/bin/assets/data/songs/milf/milf-easy.json
+ - Copying file: assets/preload/data/songs/milf/milf-hard.json -> export/release/windows/bin/assets/data/songs/milf/milf-hard.json
+ - Copying file: assets/preload/data/songs/milf/milf.json -> export/release/windows/bin/assets/data/songs/milf/milf.json
+ - Copying file: assets/preload/data/songs/milf/_meta.json -> export/release/windows/bin/assets/data/songs/milf/_meta.json
+ - Creating directory: export/release/windows/bin/assets/data/songs/monster
+ - Copying file: assets/preload/data/songs/monster/monster-easy.json -> export/release/windows/bin/assets/data/songs/monster/monster-easy.json
+ - Copying file: assets/preload/data/songs/monster/monster-hard.json -> export/release/windows/bin/assets/data/songs/monster/monster-hard.json
+ - Copying file: assets/preload/data/songs/monster/monster.json -> export/release/windows/bin/assets/data/songs/monster/monster.json
+ - Copying file: assets/preload/data/songs/monster/_meta.json -> export/release/windows/bin/assets/data/songs/monster/_meta.json
+ - Creating directory: export/release/windows/bin/assets/data/songs/offsettest
+ - Copying file: assets/preload/data/songs/offsettest/offsettest.json -> export/release/windows/bin/assets/data/songs/offsettest/offsettest.json
+ - Copying file: assets/preload/data/songs/offsettest/_meta.json -> export/release/windows/bin/assets/data/songs/offsettest/_meta.json
+ - Creating directory: export/release/windows/bin/assets/data/songs/philly
+ - Copying file: assets/preload/data/songs/philly/philly-easy.json -> export/release/windows/bin/assets/data/songs/philly/philly-easy.json
+ - Copying file: assets/preload/data/songs/philly/philly-hard.json -> export/release/windows/bin/assets/data/songs/philly/philly-hard.json
+ - Copying file: assets/preload/data/songs/philly/philly.json -> export/release/windows/bin/assets/data/songs/philly/philly.json
+ - Copying file: assets/preload/data/songs/philly/_meta.json -> export/release/windows/bin/assets/data/songs/philly/_meta.json
+ - Creating directory: export/release/windows/bin/assets/data/songs/pico
+ - Copying file: assets/preload/data/songs/pico/pico-easy.json -> export/release/windows/bin/assets/data/songs/pico/pico-easy.json
+ - Copying file: assets/preload/data/songs/pico/pico-hard.json -> export/release/windows/bin/assets/data/songs/pico/pico-hard.json
+ - Copying file: assets/preload/data/songs/pico/pico.json -> export/release/windows/bin/assets/data/songs/pico/pico.json
+ - Copying file: assets/preload/data/songs/pico/_meta.json -> export/release/windows/bin/assets/data/songs/pico/_meta.json
+ - Creating directory: export/release/windows/bin/assets/data/songs/ridge
+ - Copying file: assets/preload/data/songs/ridge/ridge.json -> export/release/windows/bin/assets/data/songs/ridge/ridge.json
+ - Copying file: assets/preload/data/songs/ridge/_meta.json -> export/release/windows/bin/assets/data/songs/ridge/_meta.json
+ - Creating directory: export/release/windows/bin/assets/data/songs/roses
+ - Copying file: assets/preload/data/songs/roses/dialogue.txt -> export/release/windows/bin/assets/data/songs/roses/dialogue.txt
+ - Copying file: assets/preload/data/songs/roses/roses-easy.json -> export/release/windows/bin/assets/data/songs/roses/roses-easy.json
+ - Copying file: assets/preload/data/songs/roses/roses-hard.json -> export/release/windows/bin/assets/data/songs/roses/roses-hard.json
+ - Copying file: assets/preload/data/songs/roses/roses.json -> export/release/windows/bin/assets/data/songs/roses/roses.json
+ - Copying file: assets/preload/data/songs/roses/_meta.json -> export/release/windows/bin/assets/data/songs/roses/_meta.json
+ - Creating directory: export/release/windows/bin/assets/data/songs/satin-panties
+ - Copying file: assets/preload/data/songs/satin-panties/satin-panties-easy.json -> export/release/windows/bin/assets/data/songs/satin-panties/satin-panties-easy.json
+ - Copying file: assets/preload/data/songs/satin-panties/satin-panties-hard.json -> export/release/windows/bin/assets/data/songs/satin-panties/satin-panties-hard.json
+ - Copying file: assets/preload/data/songs/satin-panties/satin-panties.json -> export/release/windows/bin/assets/data/songs/satin-panties/satin-panties.json
+ - Copying file: assets/preload/data/songs/satin-panties/_meta.json -> export/release/windows/bin/assets/data/songs/satin-panties/_meta.json
+ - Creating directory: export/release/windows/bin/assets/data/songs/senpai
+ - Copying file: assets/preload/data/songs/senpai/dialogue.txt -> export/release/windows/bin/assets/data/songs/senpai/dialogue.txt
+ - Copying file: assets/preload/data/songs/senpai/senpai-easy.json -> export/release/windows/bin/assets/data/songs/senpai/senpai-easy.json
+ - Copying file: assets/preload/data/songs/senpai/senpai-hard.json -> export/release/windows/bin/assets/data/songs/senpai/senpai-hard.json
+ - Copying file: assets/preload/data/songs/senpai/senpai.json -> export/release/windows/bin/assets/data/songs/senpai/senpai.json
+ - Copying file: assets/preload/data/songs/senpai/_meta.json -> export/release/windows/bin/assets/data/songs/senpai/_meta.json
+ - Creating directory: export/release/windows/bin/assets/data/songs/smash
+ - Copying file: assets/preload/data/songs/smash/smash.json -> export/release/windows/bin/assets/data/songs/smash/smash.json
+ - Copying file: assets/preload/data/songs/smash/_meta.json -> export/release/windows/bin/assets/data/songs/smash/_meta.json
+ - Creating directory: export/release/windows/bin/assets/data/songs/south
+ - Copying file: assets/preload/data/songs/south/south-easy.json -> export/release/windows/bin/assets/data/songs/south/south-easy.json
+ - Copying file: assets/preload/data/songs/south/south-hard.json -> export/release/windows/bin/assets/data/songs/south/south-hard.json
+ - Copying file: assets/preload/data/songs/south/south.json -> export/release/windows/bin/assets/data/songs/south/south.json
+ - Copying file: assets/preload/data/songs/south/_meta.json -> export/release/windows/bin/assets/data/songs/south/_meta.json
+ - Creating directory: export/release/windows/bin/assets/data/songs/spookeez
+ - Copying file: assets/preload/data/songs/spookeez/spookeez-easy.json -> export/release/windows/bin/assets/data/songs/spookeez/spookeez-easy.json
+ - Copying file: assets/preload/data/songs/spookeez/spookeez-hard.json -> export/release/windows/bin/assets/data/songs/spookeez/spookeez-hard.json
+ - Copying file: assets/preload/data/songs/spookeez/spookeez.json -> export/release/windows/bin/assets/data/songs/spookeez/spookeez.json
+ - Copying file: assets/preload/data/songs/spookeez/_meta.json -> export/release/windows/bin/assets/data/songs/spookeez/_meta.json
+ - Creating directory: export/release/windows/bin/assets/data/songs/test
+ - Copying file: assets/preload/data/songs/test/test.json -> export/release/windows/bin/assets/data/songs/test/test.json
+ - Copying file: assets/preload/data/songs/test/_meta.json -> export/release/windows/bin/assets/data/songs/test/_meta.json
+ - Creating directory: export/release/windows/bin/assets/data/songs/thorns
+ - Copying file: assets/preload/data/songs/thorns/dialogue.txt -> export/release/windows/bin/assets/data/songs/thorns/dialogue.txt
+ - Copying file: assets/preload/data/songs/thorns/thorns-easy.json -> export/release/windows/bin/assets/data/songs/thorns/thorns-easy.json
+ - Copying file: assets/preload/data/songs/thorns/thorns-hard.json -> export/release/windows/bin/assets/data/songs/thorns/thorns-hard.json
+ - Copying file: assets/preload/data/songs/thorns/thorns.json -> export/release/windows/bin/assets/data/songs/thorns/thorns.json
+ - Copying file: assets/preload/data/songs/thorns/_meta.json -> export/release/windows/bin/assets/data/songs/thorns/_meta.json
+ - Creating directory: export/release/windows/bin/assets/data/songs/tutorial
+ - Copying file: assets/preload/data/songs/tutorial/modchart.lua -> export/release/windows/bin/assets/data/songs/tutorial/modchart.lua
+ - Copying file: assets/preload/data/songs/tutorial/tutorial-easy.json -> export/release/windows/bin/assets/data/songs/tutorial/tutorial-easy.json
+ - Copying file: assets/preload/data/songs/tutorial/tutorial-hard.json -> export/release/windows/bin/assets/data/songs/tutorial/tutorial-hard.json
+ - Copying file: assets/preload/data/songs/tutorial/tutorial.json -> export/release/windows/bin/assets/data/songs/tutorial/tutorial.json
+ - Copying file: assets/preload/data/songs/tutorial/_meta.json -> export/release/windows/bin/assets/data/songs/tutorial/_meta.json
+ - Creating directory: export/release/windows/bin/assets/data/songs/winter-horrorland
+ - Copying file: assets/preload/data/songs/winter-horrorland/winter-horrorland-easy.json -> export/release/windows/bin/assets/data/songs/winter-horrorland/winter-horrorland-easy.json
+ - Copying file: assets/preload/data/songs/winter-horrorland/winter-horrorland-hard.json -> export/release/windows/bin/assets/data/songs/winter-horrorland/winter-horrorland-hard.json
+ - Copying file: assets/preload/data/songs/winter-horrorland/winter-horrorland.json -> export/release/windows/bin/assets/data/songs/winter-horrorland/winter-horrorland.json
+ - Copying file: assets/preload/data/songs/winter-horrorland/_meta.json -> export/release/windows/bin/assets/data/songs/winter-horrorland/_meta.json
+ - Copying file: assets/preload/data/specialThanks.txt -> export/release/windows/bin/assets/data/specialThanks.txt
+ - Copying file: assets/preload/data/stageList.txt -> export/release/windows/bin/assets/data/stageList.txt
+ - Copying file: assets/preload/data/weekNames.txt -> export/release/windows/bin/assets/data/weekNames.txt
+ - Creating directory: export/release/windows/bin/assets/images
+ - Copying file: assets/preload/images/alphabet.png -> export/release/windows/bin/assets/images/alphabet.png
+ - Copying file: assets/preload/images/alphabet.xml -> export/release/windows/bin/assets/images/alphabet.xml
+ - Copying file: assets/preload/images/campaign_menu_UI_assets.png -> export/release/windows/bin/assets/images/campaign_menu_UI_assets.png
+ - Copying file: assets/preload/images/campaign_menu_UI_assets.xml -> export/release/windows/bin/assets/images/campaign_menu_UI_assets.xml
+ - Copying file: assets/preload/images/campaign_menu_UI_characters.png -> export/release/windows/bin/assets/images/campaign_menu_UI_characters.png
+ - Copying file: assets/preload/images/campaign_menu_UI_characters.xml -> export/release/windows/bin/assets/images/campaign_menu_UI_characters.xml
+ - Copying file: assets/preload/images/FNF_main_menu_assets.png -> export/release/windows/bin/assets/images/FNF_main_menu_assets.png
+ - Copying file: assets/preload/images/FNF_main_menu_assets.xml -> export/release/windows/bin/assets/images/FNF_main_menu_assets.xml
+ - Copying file: assets/preload/images/gfDanceTitle.png -> export/release/windows/bin/assets/images/gfDanceTitle.png
+ - Copying file: assets/preload/images/gfDanceTitle.xml -> export/release/windows/bin/assets/images/gfDanceTitle.xml
+ - Creating directory: export/release/windows/bin/assets/images/icons
+ - Copying file: assets/preload/images/icons/icon-bf-old.png -> export/release/windows/bin/assets/images/icons/icon-bf-old.png
+ - Copying file: assets/preload/images/icons/icon-bf-pixel.png -> export/release/windows/bin/assets/images/icons/icon-bf-pixel.png
+ - Copying file: assets/preload/images/icons/icon-bf.png -> export/release/windows/bin/assets/images/icons/icon-bf.png
+ - Copying file: assets/preload/images/icons/icon-dad.png -> export/release/windows/bin/assets/images/icons/icon-dad.png
+ - Copying file: assets/preload/images/icons/icon-face.png -> export/release/windows/bin/assets/images/icons/icon-face.png
+ - Copying file: assets/preload/images/icons/icon-gf.png -> export/release/windows/bin/assets/images/icons/icon-gf.png
+ - Copying file: assets/preload/images/icons/icon-mom.png -> export/release/windows/bin/assets/images/icons/icon-mom.png
+ - Copying file: assets/preload/images/icons/icon-monster.png -> export/release/windows/bin/assets/images/icons/icon-monster.png
+ - Copying file: assets/preload/images/icons/icon-parents.png -> export/release/windows/bin/assets/images/icons/icon-parents.png
+ - Copying file: assets/preload/images/icons/icon-pico.png -> export/release/windows/bin/assets/images/icons/icon-pico.png
+ - Copying file: assets/preload/images/icons/icon-senpai.png -> export/release/windows/bin/assets/images/icons/icon-senpai.png
+ - Copying file: assets/preload/images/icons/icon-sm.png -> export/release/windows/bin/assets/images/icons/icon-sm.png
+ - Copying file: assets/preload/images/icons/icon-spirit.png -> export/release/windows/bin/assets/images/icons/icon-spirit.png
+ - Copying file: assets/preload/images/icons/icon-spooky.png -> export/release/windows/bin/assets/images/icons/icon-spooky.png
+ - Copying file: assets/preload/images/icons/icon-tankman.png -> export/release/windows/bin/assets/images/icons/icon-tankman.png
+ - Copying file: assets/preload/images/KadeEngineLogo.png -> export/release/windows/bin/assets/images/KadeEngineLogo.png
+ - Copying file: assets/preload/images/KadeEngineLogoBumpin.png -> export/release/windows/bin/assets/images/KadeEngineLogoBumpin.png
+ - Copying file: assets/preload/images/KadeEngineLogoBumpin.xml -> export/release/windows/bin/assets/images/KadeEngineLogoBumpin.xml
+ - Copying file: assets/preload/images/KadeEngineLogoOld.png -> export/release/windows/bin/assets/images/KadeEngineLogoOld.png
+ - Copying file: assets/preload/images/logo.png -> export/release/windows/bin/assets/images/logo.png
+ - Copying file: assets/preload/images/logoBumpin.png -> export/release/windows/bin/assets/images/logoBumpin.png
+ - Copying file: assets/preload/images/logoBumpin.xml -> export/release/windows/bin/assets/images/logoBumpin.xml
+ - Copying file: assets/preload/images/menuBG.png -> export/release/windows/bin/assets/images/menuBG.png
+ - Copying file: assets/preload/images/menuBGBlue.png -> export/release/windows/bin/assets/images/menuBGBlue.png
+ - Copying file: assets/preload/images/menuBGMagenta.png -> export/release/windows/bin/assets/images/menuBGMagenta.png
+ - Copying file: assets/preload/images/menuDesat.png -> export/release/windows/bin/assets/images/menuDesat.png
+ - Copying file: assets/preload/images/newgrounds_logo.png -> export/release/windows/bin/assets/images/newgrounds_logo.png
+ - Copying file: assets/preload/images/num0.png -> export/release/windows/bin/assets/images/num0.png
+ - Copying file: assets/preload/images/num1.png -> export/release/windows/bin/assets/images/num1.png
+ - Copying file: assets/preload/images/num2.png -> export/release/windows/bin/assets/images/num2.png
+ - Copying file: assets/preload/images/num3.png -> export/release/windows/bin/assets/images/num3.png
+ - Copying file: assets/preload/images/num4.png -> export/release/windows/bin/assets/images/num4.png
+ - Copying file: assets/preload/images/num5.png -> export/release/windows/bin/assets/images/num5.png
+ - Copying file: assets/preload/images/num6.png -> export/release/windows/bin/assets/images/num6.png
+ - Copying file: assets/preload/images/num7.png -> export/release/windows/bin/assets/images/num7.png
+ - Copying file: assets/preload/images/num8.png -> export/release/windows/bin/assets/images/num8.png
+ - Copying file: assets/preload/images/num9.png -> export/release/windows/bin/assets/images/num9.png
+ - Creating directory: export/release/windows/bin/assets/images/storymenu
+ - Copying file: assets/preload/images/storymenu/week0.png -> export/release/windows/bin/assets/images/storymenu/week0.png
+ - Copying file: assets/preload/images/storymenu/week1.png -> export/release/windows/bin/assets/images/storymenu/week1.png
+ - Copying file: assets/preload/images/storymenu/week2.png -> export/release/windows/bin/assets/images/storymenu/week2.png
+ - Copying file: assets/preload/images/storymenu/week3.png -> export/release/windows/bin/assets/images/storymenu/week3.png
+ - Copying file: assets/preload/images/storymenu/week4.png -> export/release/windows/bin/assets/images/storymenu/week4.png
+ - Copying file: assets/preload/images/storymenu/week5.png -> export/release/windows/bin/assets/images/storymenu/week5.png
+ - Copying file: assets/preload/images/storymenu/week6.png -> export/release/windows/bin/assets/images/storymenu/week6.png
+ - Copying file: assets/preload/images/titleEnter.png -> export/release/windows/bin/assets/images/titleEnter.png
+ - Copying file: assets/preload/images/titleEnter.xml -> export/release/windows/bin/assets/images/titleEnter.xml
+ - Creating directory: export/release/windows/bin/assets/music
+ - Copying file: assets/preload/music/freakyMenu.ogg -> export/release/windows/bin/assets/music/freakyMenu.ogg
+ - Creating directory: export/release/windows/bin/assets/sounds
+ - Copying file: assets/preload/sounds/cancelMenu.ogg -> export/release/windows/bin/assets/sounds/cancelMenu.ogg
+ - Copying file: assets/preload/sounds/confirmMenu.ogg -> export/release/windows/bin/assets/sounds/confirmMenu.ogg
+ - Copying file: assets/preload/sounds/scrollMenu.ogg -> export/release/windows/bin/assets/sounds/scrollMenu.ogg
+ - Creating directory: export/release/windows/bin/assets/videos
+ - Creating directory: export/release/windows/bin/assets/videos/daWeirdVid
+ - Copying file: assets/preload/videos/daWeirdVid/dontDelete.webm -> export/release/windows/bin/assets/videos/daWeirdVid/dontDelete.webm
+ - Creating directory: export/release/windows/bin/assets/songs
+ - Creating directory: export/release/windows/bin/assets/songs/blammed
+ - Copying file: assets/songs/blammed/Inst.ogg -> export/release/windows/bin/assets/songs/blammed/Inst.ogg
+ - Copying file: assets/songs/blammed/Voices.ogg -> export/release/windows/bin/assets/songs/blammed/Voices.ogg
+ - Creating directory: export/release/windows/bin/assets/songs/bopeebo
+ - Copying file: assets/songs/bopeebo/Inst.ogg -> export/release/windows/bin/assets/songs/bopeebo/Inst.ogg
+ - Copying file: assets/songs/bopeebo/Voices.ogg -> export/release/windows/bin/assets/songs/bopeebo/Voices.ogg
+ - Creating directory: export/release/windows/bin/assets/songs/cocoa
+ - Copying file: assets/songs/cocoa/Inst.ogg -> export/release/windows/bin/assets/songs/cocoa/Inst.ogg
+ - Copying file: assets/songs/cocoa/Voices.ogg -> export/release/windows/bin/assets/songs/cocoa/Voices.ogg
+ - Creating directory: export/release/windows/bin/assets/songs/dadbattle
+ - Copying file: assets/songs/dadbattle/Inst.ogg -> export/release/windows/bin/assets/songs/dadbattle/Inst.ogg
+ - Copying file: assets/songs/dadbattle/Voices.ogg -> export/release/windows/bin/assets/songs/dadbattle/Voices.ogg
+ - Creating directory: export/release/windows/bin/assets/songs/eggnog
+ - Copying file: assets/songs/eggnog/Inst.ogg -> export/release/windows/bin/assets/songs/eggnog/Inst.ogg
+ - Copying file: assets/songs/eggnog/Voices.ogg -> export/release/windows/bin/assets/songs/eggnog/Voices.ogg
+ - Creating directory: export/release/windows/bin/assets/songs/fresh
+ - Copying file: assets/songs/fresh/Inst.ogg -> export/release/windows/bin/assets/songs/fresh/Inst.ogg
+ - Copying file: assets/songs/fresh/Voices.ogg -> export/release/windows/bin/assets/songs/fresh/Voices.ogg
+ - Creating directory: export/release/windows/bin/assets/songs/high
+ - Copying file: assets/songs/high/Inst.ogg -> export/release/windows/bin/assets/songs/high/Inst.ogg
+ - Copying file: assets/songs/high/Voices.ogg -> export/release/windows/bin/assets/songs/high/Voices.ogg
+ - Creating directory: export/release/windows/bin/assets/songs/milf
+ - Copying file: assets/songs/milf/Inst.ogg -> export/release/windows/bin/assets/songs/milf/Inst.ogg
+ - Copying file: assets/songs/milf/Voices.ogg -> export/release/windows/bin/assets/songs/milf/Voices.ogg
+ - Creating directory: export/release/windows/bin/assets/songs/monster
+ - Copying file: assets/songs/monster/Inst.ogg -> export/release/windows/bin/assets/songs/monster/Inst.ogg
+ - Copying file: assets/songs/monster/Voices.ogg -> export/release/windows/bin/assets/songs/monster/Voices.ogg
+ - Creating directory: export/release/windows/bin/assets/songs/offsettest
+ - Copying file: assets/songs/offsettest/Inst.ogg -> export/release/windows/bin/assets/songs/offsettest/Inst.ogg
+ - Creating directory: export/release/windows/bin/assets/songs/philly
+ - Copying file: assets/songs/philly/Inst.ogg -> export/release/windows/bin/assets/songs/philly/Inst.ogg
+ - Copying file: assets/songs/philly/Voices.ogg -> export/release/windows/bin/assets/songs/philly/Voices.ogg
+ - Creating directory: export/release/windows/bin/assets/songs/pico
+ - Copying file: assets/songs/pico/Inst.ogg -> export/release/windows/bin/assets/songs/pico/Inst.ogg
+ - Copying file: assets/songs/pico/Voices.ogg -> export/release/windows/bin/assets/songs/pico/Voices.ogg
+ - Creating directory: export/release/windows/bin/assets/songs/roses
+ - Copying file: assets/songs/roses/Inst.ogg -> export/release/windows/bin/assets/songs/roses/Inst.ogg
+ - Copying file: assets/songs/roses/Voices.ogg -> export/release/windows/bin/assets/songs/roses/Voices.ogg
+ - Creating directory: export/release/windows/bin/assets/songs/satin-panties
+ - Copying file: assets/songs/satin-panties/Inst.ogg -> export/release/windows/bin/assets/songs/satin-panties/Inst.ogg
+ - Copying file: assets/songs/satin-panties/Voices.ogg -> export/release/windows/bin/assets/songs/satin-panties/Voices.ogg
+ - Creating directory: export/release/windows/bin/assets/songs/senpai
+ - Copying file: assets/songs/senpai/Inst.ogg -> export/release/windows/bin/assets/songs/senpai/Inst.ogg
+ - Copying file: assets/songs/senpai/Voices.ogg -> export/release/windows/bin/assets/songs/senpai/Voices.ogg
+ - Creating directory: export/release/windows/bin/assets/songs/south
+ - Copying file: assets/songs/south/Inst.ogg -> export/release/windows/bin/assets/songs/south/Inst.ogg
+ - Copying file: assets/songs/south/Voices.ogg -> export/release/windows/bin/assets/songs/south/Voices.ogg
+ - Creating directory: export/release/windows/bin/assets/songs/spookeez
+ - Copying file: assets/songs/spookeez/Inst.ogg -> export/release/windows/bin/assets/songs/spookeez/Inst.ogg
  - Copying file: assets/songs/spookeez/Voices.ogg -> export/release/windows/bin/assets/songs/spookeez/Voices.ogg
  - Creating directory: export/release/windows/bin/assets/songs/test
  - Copying file: assets/songs/test/Inst.ogg -> export/release/windows/bin/assets/songs/test/Inst.ogg
@@ -298,129 +576,4 @@ Running command: BUILD
  - Copying library file: D:/a/KFE/KFE/../haxelib/lime/7,9,0/ndll/Windows64/lime.ndll -> export/release/windows/bin/lime.ndll
  - Copying library file: D:/a/KFE/KFE/../haxelib/extension-webm/git/ndll/Windows64/extension-webm.ndll -> export/release/windows/bin/extension-webm.ndll
  - Running command: haxe export/release/windows/haxe/release.hxml -D HXCPP_M64 -D no_console
-14:26:05 avail=13518MB commitLimit=19323MB
-14:27:08 avail=8686MB commitLimit=19323MB
-
-        'haxe WS(GB): ' + [math]::Round($_.WorkingSet64/1GB,2) + '  PM(GB): ' + 
-[math]::Round($_.PagedMemorySize64/1GB,2)
-      
-14:28:10 avail=3755MB commitLimit=19323MB
-
-        'haxe WS(GB): ' + [math]::Round($_.WorkingSet64/1GB,2) + '  PM(GB): ' + 
-[math]::Round($_.PagedMemorySize64/1GB,2)
-      
-14:29:22 avail=529MB commitLimit=19323MB
-
-        'haxe WS(GB): ' + [math]::Round($_.WorkingSet64/1GB,2) + '  PM(GB): ' + 
-[math]::Round($_.PagedMemorySize64/1GB,2)
-      
-14:30:28 avail=1508MB commitLimit=22156MB
-
-        'haxe WS(GB): ' + [math]::Round($_.WorkingSet64/1GB,2) + '  PM(GB): ' + 
-[math]::Round($_.PagedMemorySize64/1GB,2)
-      
-14:31:34 avail=1247MB commitLimit=23628MB
-
-        'haxe WS(GB): ' + [math]::Round($_.WorkingSet64/1GB,2) + '  PM(GB): ' + 
-[math]::Round($_.PagedMemorySize64/1GB,2)
-      
-14:33:36 avail=1075MB commitLimit=24780MB
-
-        'haxe WS(GB): ' + [math]::Round($_.WorkingSet64/1GB,2) + '  PM(GB): ' + 
-[math]::Round($_.PagedMemorySize64/1GB,2)
-      
-14:35:02 avail=600MB commitLimit=26124MB
-
-        'haxe WS(GB): ' + [math]::Round($_.WorkingSet64/1GB,2) + '  PM(GB): ' + 
-[math]::Round($_.PagedMemorySize64/1GB,2)
-      
-14:36:27 avail=1483MB commitLimit=27276MB
-
-        'haxe WS(GB): ' + [math]::Round($_.WorkingSet64/1GB,2) + '  PM(GB): ' + 
-[math]::Round($_.PagedMemorySize64/1GB,2)
-      
-14:37:41 avail=1201MB commitLimit=29132MB
-
-        'haxe WS(GB): ' + [math]::Round($_.WorkingSet64/1GB,2) + '  PM(GB): ' + 
-[math]::Round($_.PagedMemorySize64/1GB,2)
-      
-14:38:56 avail=1154MB commitLimit=29132MB
-
-        'haxe WS(GB): ' + [math]::Round($_.WorkingSet64/1GB,2) + '  PM(GB): ' + 
-[math]::Round($_.PagedMemorySize64/1GB,2)
-      
-14:40:08 avail=1686MB commitLimit=29132MB
-
-        'haxe WS(GB): ' + [math]::Round($_.WorkingSet64/1GB,2) + '  PM(GB): ' + 
-[math]::Round($_.PagedMemorySize64/1GB,2)
-      
-14:41:19 avail=1036MB commitLimit=30476MB
-
-        'haxe WS(GB): ' + [math]::Round($_.WorkingSet64/1GB,2) + '  PM(GB): ' + 
-[math]::Round($_.PagedMemorySize64/1GB,2)
-      
-14:42:35 avail=922MB commitLimit=32652MB
-
-        'haxe WS(GB): ' + [math]::Round($_.WorkingSet64/1GB,2) + '  PM(GB): ' + 
-[math]::Round($_.PagedMemorySize64/1GB,2)
-      
-14:43:43 avail=1317MB commitLimit=32652MB
-
-        'haxe WS(GB): ' + [math]::Round($_.WorkingSet64/1GB,2) + '  PM(GB): ' + 
-[math]::Round($_.PagedMemorySize64/1GB,2)
-      
-14:45:02 avail=1292MB commitLimit=32652MB
-
-        'haxe WS(GB): ' + [math]::Round($_.WorkingSet64/1GB,2) + '  PM(GB): ' + 
-[math]::Round($_.PagedMemorySize64/1GB,2)
-      
-14:46:31 avail=1062MB commitLimit=32844MB
-
-        'haxe WS(GB): ' + [math]::Round($_.WorkingSet64/1GB,2) + '  PM(GB): ' + 
-[math]::Round($_.PagedMemorySize64/1GB,2)
-      
-14:47:44 avail=1012MB commitLimit=35578MB
-
-        'haxe WS(GB): ' + [math]::Round($_.WorkingSet64/1GB,2) + '  PM(GB): ' + 
-[math]::Round($_.PagedMemorySize64/1GB,2)
-      
-14:48:49 avail=453MB commitLimit=35578MB
-
-        'haxe WS(GB): ' + [math]::Round($_.WorkingSet64/1GB,2) + '  PM(GB): ' + 
-[math]::Round($_.PagedMemorySize64/1GB,2)
-      
-14:49:56 avail=910MB commitLimit=35578MB
-
-        'haxe WS(GB): ' + [math]::Round($_.WorkingSet64/1GB,2) + '  PM(GB): ' + 
-[math]::Round($_.PagedMemorySize64/1GB,2)
-      
-14:51:12 avail=566MB commitLimit=35578MB
-
-        'haxe WS(GB): ' + [math]::Round($_.WorkingSet64/1GB,2) + '  PM(GB): ' + 
-[math]::Round($_.PagedMemorySize64/1GB,2)
-      
-14:52:17 avail=549MB commitLimit=35578MB
-
-        'haxe WS(GB): ' + [math]::Round($_.WorkingSet64/1GB,2) + '  PM(GB): ' + 
-[math]::Round($_.PagedMemorySize64/1GB,2)
-      
-14:53:22 avail=905MB commitLimit=35578MB
-
-        'haxe WS(GB): ' + [math]::Round($_.WorkingSet64/1GB,2) + '  PM(GB): ' + 
-[math]::Round($_.PagedMemorySize64/1GB,2)
-      
-14:54:32 avail=1018MB commitLimit=35578MB
-
-        'haxe WS(GB): ' + [math]::Round($_.WorkingSet64/1GB,2) + '  PM(GB): ' + 
-[math]::Round($_.PagedMemorySize64/1GB,2)
-      
-14:55:37 avail=1007MB commitLimit=35578MB
-
-        'haxe WS(GB): ' + [math]::Round($_.WorkingSet64/1GB,2) + '  PM(GB): ' + 
-[math]::Round($_.PagedMemorySize64/1GB,2)
-      
-14:56:42 avail=1024MB commitLimit=35578MB
-
-        'haxe WS(GB): ' + [math]::Round($_.WorkingSet64/1GB,2) + '  PM(GB): ' + 
-[math]::Round($_.PagedMemorySize64/1GB,2)
-      
+Fatal error: exception Out of memory
