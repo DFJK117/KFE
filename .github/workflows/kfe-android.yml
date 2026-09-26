@@ -31,7 +31,7 @@ jobs:
 
     env:
       HAXELIB_PATH: ${{ github.workspace }}/../haxelib
-      HXCPP_COMPILE_THREADS: '2'
+      HXCPP_COMPILE_THREADS: '1'
       # ★ rebuild 原生库（extension-webm）时必须指明 Android 架构，否则 hxcpp 直接报：
       #     Error: Please set one of the architectures, eg HXCPP_ARM64, HXCPP_X86, ...
       #   设两个架构，rebuild 会编出对应 ndll，lime build android 也编两种 ABI，
@@ -208,18 +208,32 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
           set -e
+          # ★ 心跳 commit 必需的 git 身份（checkout 默认不配 user，
+          #   上一轮心跳 commit 全部静默失败，只推了裸 HEAD）
+          git config user.email "ci@users.noreply.github.com"
+          git config user.name "KFE CI Bot"
           (
             while true; do
+              # 【KFE 诊断】法医快照：内存 / 磁盘 / PSI / 内存大户 / oomd 真实状态 /
+              # 内核 kill 记录——无论编译进程被谁杀，凶手照片每 60 秒一份
+              {
+                echo "===== $(date '+%F %T') ====="
+                free -h
+                echo "--- 磁盘 ---"; df -h / /mnt 2>/dev/null
+                echo "--- 内存压力 PSI ---"; cat /proc/pressure/memory 2>/dev/null
+                echo "--- 内存大户 TOP12 ---"; ps aux --sort=-rss | head -n 13
+                echo "--- oomd 状态（enabled应为 masked）---"
+                systemctl is-enabled systemd-oomd 2>&1 || true
+                systemctl is-active systemd-oomd 2>&1 || true
+                echo "--- 内核 kill/OOM 记录 ---"
+                sudo dmesg 2>/dev/null | grep -iE "kill|oom|out of memory" | tail -n 20
+              } > diag.snapshot 2>&1
               echo "$(date +%H:%M:%S) $(free -m | awk '/^Mem:/{print "used="$3"MB avail="$7"MB"}')" >> memlog.txt
-              # 【KFE 诊断】心跳上传：每 60 秒把 build.log 快照 commit+push 到 ci-diag。
-              # 编译进程无论被谁杀（oomd/OOM killer/runner 重启），死前 1 分钟内的
-              # 报错都一定已经在远端分支上——彻底封死日志黑洞。
-              if [ -f build.log ]; then
-                tail -n 500 build.log > build.diag.log 2>/dev/null || true
-                git add -f build.diag.log memlog.txt 2>/dev/null || true
-                git commit -m "ci-diag heartbeat $(date +%H:%M:%S)" >/dev/null 2>&1 || true
-                git push -f "https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git" HEAD:ci-diag >/dev/null 2>&1 || true
-              fi
+              tail -n 400 build.log > build.diag.log 2>/dev/null || true
+              cat diag.snapshot >> build.diag.log 2>/dev/null || true
+              git add -f build.diag.log memlog.txt diag.snapshot 2>/dev/null || true
+              git commit -m "ci-diag heartbeat $(date +%H:%M:%S)" >/dev/null 2>&1 || true
+              git push -f "https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git" HEAD:ci-diag >/dev/null 2>&1 || true
               sleep 60
             done
           ) &
