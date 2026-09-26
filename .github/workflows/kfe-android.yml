@@ -179,6 +179,24 @@ jobs:
       - name: 重编 extension-webm（Android）
         run: haxelib run lime rebuild extension-webm android
 
+      # ★ 防内存杀手：上次编译跑了 5 分钟被 SIGTERM(143) 干掉——ubuntu runner 镜像
+      #   带 systemd-oomd，内存压力高时它直接对编译进程发 SIGTERM（Windows 那边
+      #   的"提交上限 OOM"同理，根源一致：内存不够编 KFE 全量）。
+      #   对策：划 8GB swap（等效扩页面文件）+ 停用 oomd，双保险。
+      - name: 加 8GB swap 并停用 oomd（防 SIGTERM 内存杀手）
+        run: |
+          sudo swapoff -a || true
+          sudo rm -f /swapfile
+          sudo fallocate -l 8G /swapfile
+          sudo chmod 600 /swapfile
+          sudo mkswap /swapfile
+          sudo swapon /swapfile
+          sudo systemctl stop systemd-oomd 2>/dev/null || true
+          sudo systemctl disable systemd-oomd 2>/dev/null || true
+          echo "--- swap 已启用 ---"
+          swapon --show
+          free -h
+
       - name: 编译 android -release
         run: |
           set -e
@@ -202,7 +220,18 @@ jobs:
           echo "--- 找 APK ---"
           find export -name "*.apk" -o -name "*.aab" 2>/dev/null | head -10
           ls -la export/release/android/bin || true
-          exit $RC
+
+          # ★ 退出码规范化：上次编译被 systemd-oomd SIGTERM(143) 杀死，
+          #   exit 143 会被 runner 当成"取消信号"，直接跳过后面所有 if: failure()
+          #   诊断步骤（上传日志 / 推 ci-diag 全没跑），造成日志黑洞。
+          #   规范化成 1 保证诊断必跑；顺便把 build.log 尾部打进主日志留底。
+          if [ "$RC" -ne 0 ]; then
+            echo "!! 编译失败，原始退出码 $RC"
+            echo "--- build.log 末尾 80 行 ---"
+            tail -n 80 build.log || true
+            exit 1
+          fi
+          exit 0
 
       - name: 上传 APK
         if: success()
