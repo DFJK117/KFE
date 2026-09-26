@@ -210,6 +210,35 @@ jobs:
             }
           "
 
+          # ★ 第 5 次 CI 量出来的数据：
+          #     物理内存 15.99GB + 页面文件 2.9GB = 提交上限 18.87GB
+          #   haxe 编译到一半就撞这个天花板上（Fatal error: exception Out of memory）。
+          #   Windows 的「提交上限」= 物理内存 + 页面文件，页面文件这么小是主因。
+          #   这里把它撑大。注意：多数情况下要重启才生效，所以下面会重新读一次
+          #   提交上限，看看到底有没有立刻生效。
+          echo "=== 尝试扩大页面文件 ==="
+          powershell -NoProfile -Command "
+            try {
+              \$cs = Get-CimInstance Win32_ComputerSystem
+              if (\$cs.AutomaticManagedPagefile) {
+                Set-CimInstance -InputObject \$cs -Property @{AutomaticManagedPagefile=\$false} -ErrorAction Stop
+                '  已关闭「自动管理页面文件」'
+              }
+              \$pf = Get-CimInstance -ClassName Win32_PageFileSetting -ErrorAction Stop
+              if (\$pf) {
+                Set-CimInstance -InputObject \$pf -Property @{InitialSize=16384; MaximumSize=32768} -ErrorAction Stop
+                '  已改成 初始 16GB / 最大 32GB（' + \$pf.Name + '）'
+              } else {
+                '  没有查到 Win32_PageFileSetting'
+              }
+            } catch {
+              '  设置失败: ' + \$_.Exception.Message
+            }
+            \$os2 = Get-CimInstance Win32_OperatingSystem
+            '  设置后提交上限(GB): ' + [math]::Round([double]\$os2.TotalVirtualMemorySize/1MB, 2)
+            '  （和上面那个 18.87 对比：没变就说明必须重启才生效）'
+          "
+
       - name: 重编 extension-webm（原生库）
         shell: bash
         run: haxelib run lime rebuild extension-webm windows
@@ -218,9 +247,37 @@ jobs:
         shell: bash
         run: |
           set -e
+
+          # 后台每分钟记一次内存，写进 memlog.txt。
+          # 为什么需要：GitHub 自己的日志**完全不打印**内存，前两次 OOM 都是
+          # 「跑着跑着突然 Fatal error: exception Out of memory」，
+          # 完全不知道当时用了多少、离天花板还有多远。有了这条曲线才能判断
+          # 到底是「需求太大」还是「页面文件卡死了提交上限」。
+          (
+            while true; do
+              powershell -NoProfile -Command "
+                \$os = Get-CimInstance Win32_OperatingSystem
+                '{0} avail={1}MB commitLimit={2}MB' -f (Get-Date -Format HH:mm:ss),
+                  [math]::Round(\$os.FreePhysicalMemory/1KB),
+                  [math]::Round([double]\$os.TotalVirtualMemorySize/1KB)
+              " >> memlog.txt 2>&1 || true
+              sleep 60
+            done
+          ) &
+          MEMPID=$!
+
+          # set +e：编译挂了也要把内存曲线和产出目录打出来，
+          # 否则 set -e 会直接退出，什么都看不到。
+          set +e
           haxelib run lime build windows -release
+          RC=$?
+          kill $MEMPID 2>/dev/null || true
+
+          echo "--- 内存曲线（全程）---"
+          cat memlog.txt || true
           echo "--- 产出目录 ---"
           ls -la export/release/windows/bin || true
+          exit $RC
 
       - name: 上传产物
         uses: actions/upload-artifact@v4
@@ -239,5 +296,6 @@ jobs:
           path: |
             export/release/windows/haxe/log.txt
             export/release/windows/obj
+            memlog.txt
           if-no-files-found: warn
           retention-days: 14

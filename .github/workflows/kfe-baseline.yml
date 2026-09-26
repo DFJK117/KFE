@@ -1,0 +1,133 @@
+# KFE 基线对照：编译**不带任何补丁**的原版 Kade Engine 1.8
+#
+# 为什么要这个：
+#   KFE 的编译在第 4、5 次 CI 上都是
+#       Fatal error: exception Out of memory
+#   跑 25~37 分钟后 haxe 进程爆内存。但 FNF 这类项目在普通 8GB 机器上
+#   通常能编出来，而 runner 是 16GB + 2.9GB 页面文件（提交上限 18.87GB）。
+#
+#   所以有两种可能，必须分清是哪一种：
+#     A. 环境问题 —— 这个项目就是吃内存，标准 runner 编不出来
+#     B. 补丁问题 —— KFE 新增的代码让 haxe 内存爆炸
+#          （重点嫌疑：KFEBlurShader.hx 的 @:glFragmentSource 宏）
+#
+#   这个 workflow 就是对照组：同一台机器、同一套依赖版本、同一套编译命令，
+#   唯一区别是源码换成**原版** kadedev/Kade-Engine @ 1.8（一个补丁都不打）。
+#
+#   结果怎么读：
+#     - 原版也 OOM  → 是 A，环境不够，得换更大的 runner 或想办法压内存需求
+#     - 原版编完了  → 是 B，问题在补丁里，回去逐个排查 KFE 新增的 3 个文件
+#
+# 用法：push 自动跑，或在 Actions 页面手动 Run workflow。
+
+name: KFE 基线对照（原版 KE 1.8）
+
+on:
+  push:
+    branches: [main, master, dev]
+  workflow_dispatch:
+
+jobs:
+  baseline:
+    runs-on: windows-latest
+    timeout-minutes: 300
+
+    env:
+      HAXELIB_PATH: ${{ github.workspace }}\..\haxelib
+      HXCPP_COMPILE_THREADS: '2'
+
+    steps:
+      - name: 取原版 Kade Engine 1.8 源码
+        uses: actions/checkout@v4
+        with:
+          repository: kadedev/Kade-Engine
+          ref: '1.8'
+          path: vanilla
+
+      - name: Setup Haxe 4.1.5
+        uses: krdlab/setup-haxe@v1
+        with:
+          haxe-version: 4.1.5
+
+      - name: 机器规格
+        shell: bash
+        run: |
+          powershell -NoProfile -Command "
+            \$cs = Get-CimInstance Win32_ComputerSystem
+            \$os = Get-CimInstance Win32_OperatingSystem
+            '物理内存(GB) : ' + [math]::Round(\$cs.TotalPhysicalMemory/1GB, 2)
+            '核数         : ' + \$cs.NumberOfLogicalProcessors
+            '提交上限(GB) : ' + [math]::Round([double]\$os.TotalVirtualMemorySize/1MB, 2)
+          "
+
+      # 依赖版本与主 workflow 完全一致，保证唯一变量是「源码有没有补丁」
+      - name: 安装依赖
+        shell: bash
+        run: |
+          set -e
+          mkdir -p "$HAXELIB_PATH"
+          haxelib setup "$HAXELIB_PATH"
+          haxelib install hxcpp 4.2.1
+          haxelib install lime 7.9.0
+          haxelib install openfl 9.1.0
+          haxelib install flixel 4.9.0
+          haxelib install flixel-addons 2.10.0
+          haxelib install flixel-ui 2.3.3
+          haxelib install hscript 2.0.7
+          haxelib install actuate 1.8.7
+          haxelib install polymod 1.4.3
+          haxelib git faxe https://github.com/uhrobots/faxe || true
+          haxelib git discord_rpc https://github.com/Aidan63/linc_discord-rpc
+          haxelib git extension-webm https://github.com/Kade-github/extension-webm
+          haxelib git linc_luajit https://github.com/nebulazorua/linc_luajit.git
+          haxelib git hxvm-luajit https://github.com/nebulazorua/hxvm-luajit
+          haxelib list
+
+      - name: 重编 extension-webm
+        shell: bash
+        working-directory: vanilla
+        run: haxelib run lime rebuild extension-webm windows
+
+      - name: 编译原版（无补丁）
+        shell: bash
+        working-directory: vanilla
+        run: |
+          set -e
+          (
+            while true; do
+              powershell -NoProfile -Command "
+                \$os = Get-CimInstance Win32_OperatingSystem
+                '{0} avail={1}MB commitLimit={2}MB' -f (Get-Date -Format HH:mm:ss),
+                  [math]::Round(\$os.FreePhysicalMemory/1KB),
+                  [math]::Round([double]\$os.TotalVirtualMemorySize/1KB)
+              " >> memlog.txt 2>&1 || true
+              sleep 60
+            done
+          ) &
+          MEMPID=$!
+          set +e
+          haxelib run lime build windows -release
+          RC=$?
+          kill $MEMPID 2>/dev/null || true
+          echo "--- 内存曲线（全程）---"
+          cat memlog.txt || true
+          echo "--- 产出目录 ---"
+          ls -la export/release/windows/bin || true
+          echo "--- 结论 ---"
+          if [ $RC -eq 0 ]; then
+            echo "★ 原版 KE 1.8 编译成功 —— 说明 KFE 的 OOM 是补丁引起的（可能 B）"
+          else
+            echo "★ 原版 KE 1.8 也失败（RC=$RC）—— 说明是环境/规模问题（可能性 A）"
+          fi
+          exit $RC
+
+      - name: 失败时上传日志
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: baseline-logs
+          path: |
+            vanilla/memlog.txt
+            vanilla/export/release/windows/haxe/log.txt
+          if-no-files-found: warn
+          retention-days: 14
