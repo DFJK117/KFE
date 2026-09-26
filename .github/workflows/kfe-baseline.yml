@@ -54,13 +54,12 @@ jobs:
 
       # ★ 前两轮基线都死在这：5 秒就挂，报的不是 OOM 而是
       #     actuate/1,8,7/motion/easing/Expo.hx:14-16 : ... Custom property
-      #   而主 workflow（KFE）的日志里**完全没有**这几行，说明差异在 Project.xml。
-      #
-      #   第一轮我以为是缺 --no-opt，用 sed 注入 —— 第二轮照样挂，sed 这招不可靠。
-      #   改成更彻底的做法：直接把 KFE 的 Project.xml 复制过来覆盖。
-      #   这样「编译选项」这一侧被完全拉齐，唯一变量就真的只剩源码
-      #   （vanilla 是原版 source，Project.xml 用 KFE 的）。
-      #   对照组的原则是：一次只能改一个变量。
+      #   accessor is no longer supported
+      #   这是 Haxe 4 的硬错误：actuate 1.8.7 用了老式属性访问器 (get, never)，
+      #   在 Haxe 4.1.5 下直接编译失败。根因不是「编译选项差异」，
+      #   而是 actuate 版本太老 —— 升到 1.9.0（官方为 Haxe 4.2 去掉了自定义访问器，
+      #   对 4.1.5 也兼容，且 Actuate 公开 API 与 1.8.7 一致）即可。
+      #   KFE 主 workflow 同步升到了 1.9.0，所以这里也必须升，否则不再是干净对照。
       - name: 用 KFE 的 Project.xml（拉齐编译选项）
         shell: bash
         run: |
@@ -98,7 +97,7 @@ jobs:
           haxelib install flixel-addons 2.10.0
           haxelib install flixel-ui 2.3.3
           haxelib install hscript 2.0.7
-          haxelib install actuate 1.8.7
+          haxelib install actuate 1.9.0
           haxelib install polymod 1.4.3
           haxelib git faxe https://github.com/uhrobots/faxe || true
           haxelib git discord_rpc https://github.com/Aidan63/linc_discord-rpc

@@ -77,7 +77,13 @@ jobs:
           #
           # 下面每个版本号都在 lib.haxe.org 上逐个核实过存在（HTTP 200）：
           #   lime 7.9.0 / openfl 9.1.0 / flixel 4.9.0
-          #   flixel-addons 2.10.0 / flixel-ui 2.3.3 / hscript 2.0.7 / actuate 1.8.7
+          #   flixel-addons 2.10.0 / flixel-ui 2.3.3 / hscript 2.0.7 / actuate 1.9.0
+          #
+          #   ⚠️ actuate 必须用 1.9.0，不能用 1.8.7：1.8.7 的 motion/easing/Expo.hx
+          #      用了老式属性访问器 (get, never)，在 Haxe 4.1.5 下是硬错误
+          #      （Custom property accessor is no longer supported），整个项目都编不过。
+          #      1.9.0 是官方为 Haxe 4.2 去掉自定义访问器的修复版，对 4.1.5 也兼容，
+          #      且 Actuate 公开 API 与 1.8.7 一致（KFE 只经 flixel 用 Actuate，不碰 Expo）。
           #
           # ⚠️ 反面清单：flixel 4.9.1、flixel-addons 2.9.1、flixel-ui 2.3.4
           #    这三个版本号在 haxelib 上**根本不存在**（404），它们是凭印象瞎写
@@ -88,7 +94,7 @@ jobs:
           haxelib install flixel-addons 2.10.0
           haxelib install flixel-ui 2.3.3
           haxelib install hscript 2.0.7
-          haxelib install actuate 1.8.7
+          haxelib install actuate 1.9.0
 
           # 注意：这里一律不加 --quiet。haxelib 的位置参数是
           # `install <name> [version]`，多塞一个 --quiet 有被当成 version 的风险。
@@ -180,7 +186,7 @@ jobs:
           check openfl 9.1.0
           check hxcpp 4.2.1
           check hscript 2.0.7
-          check actuate 1.8.7
+          check actuate 1.9.0
           check polymod 1.4.3
           if [ "$fail" != "0" ]; then
             echo "::error::版本守卫没过 —— 先把上面标红的对不上的修好，别往下编译了"

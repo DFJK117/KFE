@@ -105,13 +105,21 @@ jobs:
           haxelib install flixel-addons 2.10.0
           haxelib install flixel-ui 2.3.3
           haxelib install hscript 2.0.7
-          haxelib install actuate 1.8.7
+          haxelib install actuate 1.9.0
           haxelib install polymod 1.4.3
           haxelib git faxe https://github.com/uhrobots/faxe || true
           haxelib git discord_rpc https://github.com/Aidan63/linc_discord-rpc
           haxelib git extension-webm https://github.com/Kade-github/extension-webm
           # 注意：linc_luajit / hxvm-luajit 是 if="desktop"，Android 下不需要
           haxelib list | tee haxelib-list.txt
+
+      # ★ lime 7.9 在跑 android 目标前必须先「配置」一次 android 工具链，
+      #   否则 rebuild/build 会直接报：
+      #     Error: You need to run "lime setup android" before you can use the Android target
+      #   ANDROID_SDK_ROOT / ANDROID_NDK_ROOT 已经设好，这里只让 lime 把配置写进
+      #   ~/.lime/config，不重新下载（NDK 我们已经手动装到指定路径了）。
+      - name: 配置 lime android 工具链
+        run: haxelib run lime setup android
 
       # extension-webm 在 Project.xml 里是无条件加载的（:122），
       # 所以 Android 也必须有它的 ndll，不然 lime 复制阶段就会报：
