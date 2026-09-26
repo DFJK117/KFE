@@ -138,20 +138,25 @@ jobs:
       - name: 修 libwebm 的 POSIX include（Android NDK）
         run: |
           set -e
-          EWROOT=$(find "$HAXELIB_PATH/extension-webm/git" -maxdepth 1 -mindepth 1 -type d | head -1)
-          echo "extension-webm git root: $EWROOT"
-          if [ -z "$EWROOT" ]; then
-            echo "::error::没找到 extension-webm 的 git 克隆目录"
+          # 直接按文件名反查 extension-webm 的源码根，避免 git/ 下还有 tools 等
+          # 同级目录导致 find 抓错根（上一版就栽在这：抓到 git/tools，libwebm 找不到）。
+          F=$(find "$HAXELIB_PATH/extension-webm" -name mkvmuxerutil.cpp 2>/dev/null | head -1)
+          if [ -z "$F" ]; then
+            echo "::error::找不到 mkvmuxerutil.cpp，无法定位 libwebm 源码"
             exit 1
           fi
+          ROOT=$(dirname "$F"); ROOT=$(dirname "$ROOT")
+          echo "extension-webm 源码根: $ROOT"
           patched=0
           while IFS= read -r f; do
             if ! grep -q '#include <unistd.h>' "$f"; then
               sed -i '1i #include <unistd.h>\n#include <fcntl.h>' "$f"
               patched=$((patched+1))
             fi
-          done < <(find "$EWROOT/libwebm" -type f \( -name '*.cpp' -o -name '*.c' \))
-          echo "已给 $patched 个 libwebm 源文件补 unistd.h/fcntl.h"
+          done < <(find "$ROOT" -type f \( -name '*.cpp' -o -name '*.c' \))
+          echo "已给 $patched 个源文件补 unistd.h/fcntl.h"
+          echo "--- 抽查 mkvmuxerutil.cpp 头部 ---"
+          head -3 "$F"
 
       # extension-webm 在 Project.xml 里是无条件加载的（:122），
       # 所以 Android 也必须有它的 ndll，不然 lime 复制阶段就会报：
